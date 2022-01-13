@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="justthevax-blogspot-nl_20161107T201500.txt">
+    <annotation>
+        <mention id="EHOST_Instance_1739" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="369" end="372" />
+        <spannedText>n't</spannedText>
+        <creationDate>Thu Jan 13 08:00:41 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1739">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1740" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="801" end="804" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:55:34 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1740">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1741" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="914" end="917" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:56:01 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1741">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1742" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="974" end="977" />
+        <spannedText>n't</spannedText>
+        <creationDate>Wed Jan 12 17:56:10 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1742">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1743" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="1406" end="1409" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:56:58 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1743">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1744" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="1688" end="1691" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:57:12 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1744">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1745" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="1781" end="1783" />
+        <spannedText>'t</spannedText>
+        <creationDate>Wed Jan 12 18:00:15 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1745">
+        <mentionClass id="NegCue">'t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1746" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="2244" end="2247" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:57:53 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1746">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1747" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="2280" end="2283" />
+        <spannedText>not</spannedText>
+        <creationDate>Wed Jan 12 17:57:59 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1747">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>
+

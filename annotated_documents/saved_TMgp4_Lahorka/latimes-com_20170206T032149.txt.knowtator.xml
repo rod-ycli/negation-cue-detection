@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="latimes-com_20170206T032149.txt">
+    <annotation>
+        <mention id="EHOST_Instance_1772" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="51" end="53" />
+        <spannedText>un</spannedText>
+        <creationDate>Thu Jan 13 07:38:20 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1772">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1773" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="460" end="463" />
+        <spannedText>n't</spannedText>
+        <creationDate>Thu Jan 13 07:38:58 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1773">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1774" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="580" end="582" />
+        <spannedText>un</spannedText>
+        <creationDate>Thu Jan 13 07:39:13 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1774">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1775" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="1344" end="1347" />
+        <spannedText>n't</spannedText>
+        <creationDate>Thu Jan 13 07:40:15 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1775">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1776" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="2165" end="2168" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 07:41:07 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1776">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1777" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="2237" end="2246" />
+        <spannedText>no longer</spannedText>
+        <creationDate>Thu Jan 13 07:41:15 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1777">
+        <mentionClass id="NegCue">no longer</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1778" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="2499" end="2502" />
+        <spannedText>n't</spannedText>
+        <creationDate>Thu Jan 13 07:41:33 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1778">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1779" />
+        <annotator id="eHOST_2010">Lahorka</annotator>
+        <span start="156" end="158" />
+        <spannedText>no</spannedText>
+        <creationDate>Thu Jan 13 07:42:00 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1779">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>
+
