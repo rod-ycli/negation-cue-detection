@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="latimes-com_20170628T014330.txt">
+    <annotation>
+        <mention id="EHOST_Instance_936" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="325" end="328" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:07:13 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_936">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_937" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2267" end="2270" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 13:09:32 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_937">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_938" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2369" end="2372" />
+        <spannedText>mis</spannedText>
+        <creationDate>Fri Jan 14 13:09:59 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_938">
+        <mentionClass id="NegCue">mis</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_939" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2421" end="2424" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:10:13 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_939">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_940" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2470" end="2477" />
+        <spannedText>without</spannedText>
+        <creationDate>Fri Jan 14 13:10:24 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_940">
+        <mentionClass id="NegCue">without</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_941" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2676" end="2678" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 13:11:04 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_941">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_942" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="2931" end="2934" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 13:11:31 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_942">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_943" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="3329" end="3332" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:12:11 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_943">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_944" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="3351" end="3354" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:12:32 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_944">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_945" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="3593" end="3596" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 13:12:51 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_945">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_946" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="3981" end="3983" />
+        <spannedText>de</spannedText>
+        <creationDate>Fri Jan 14 13:14:57 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_946">
+        <mentionClass id="NegCue">de</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_947" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="4001" end="4004" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:15:16 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_947">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_948" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="4320" end="4323" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:16:26 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_948">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_949" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="4661" end="4663" />
+        <spannedText>No</spannedText>
+        <creationDate>Fri Jan 14 13:17:26 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_949">
+        <mentionClass id="NegCue">No</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_950" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="5081" end="5084" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:18:20 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_950">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_951" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="5182" end="5185" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 13:18:32 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_951">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_952" />
+        <annotator id="eHOST_2010">Extensible_Human_Oracle_Suite_of_Tools</annotator>
+        <span start="5391" end="5394" />
+        <spannedText>n't</spannedText>
+        <creationDate>Fri Jan 14 13:19:33 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_952">
+        <mentionClass id="NegCue">n't</mentionClass>
+    </classMention>
+    <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>
+
