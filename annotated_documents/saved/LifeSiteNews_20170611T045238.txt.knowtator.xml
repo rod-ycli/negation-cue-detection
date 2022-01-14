@@ -1,0 +1,155 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="LifeSiteNews_20170611T045238.txt">
+    <annotation>
+        <mention id="EHOST_Instance_1616" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="1077" end="1080" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:38:25 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1616">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1617" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="1566" end="1568" />
+        <spannedText>no</spannedText>
+        <creationDate>Thu Jan 13 13:38:46 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1617">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1618" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="1707" end="1709" />
+        <spannedText>no</spannedText>
+        <creationDate>Thu Jan 13 13:38:51 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1618">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1619" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="1952" end="1956" />
+        <spannedText>deny</spannedText>
+        <creationDate>Thu Jan 13 13:40:58 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1619">
+        <mentionClass id="NegCue">deny</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1620" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="2847" end="2850" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:42:25 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1620">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1621" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="2867" end="2874" />
+        <spannedText>without</spannedText>
+        <creationDate>Thu Jan 13 13:42:33 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1621">
+        <mentionClass id="NegCue">without</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1622" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="3192" end="3195" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:42:57 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1622">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1623" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="4183" end="4186" />
+        <spannedText>n’t</spannedText>
+        <creationDate>Thu Jan 13 13:43:57 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1623">
+        <mentionClass id="NegCue">n’t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1624" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="4350" end="4354" />
+        <spannedText>less</spannedText>
+        <creationDate>Thu Jan 13 13:44:51 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1624">
+        <mentionClass id="NegCue">less</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1625" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="4525" end="4528" />
+        <spannedText>n’t</spannedText>
+        <creationDate>Thu Jan 13 13:45:31 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1625">
+        <mentionClass id="NegCue">n’t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1626" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="5045" end="5048" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:47:26 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1626">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1627" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="5188" end="5191" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:49:02 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1627">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1628" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="5487" end="5490" />
+        <spannedText>not</spannedText>
+        <creationDate>Thu Jan 13 13:49:12 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1628">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_1629" />
+        <annotator id="eHOST_2010">Rod</annotator>
+        <span start="7336" end="7342" />
+        <spannedText>failed</spannedText>
+        <creationDate>Thu Jan 13 14:03:05 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_1629">
+        <mentionClass id="NegCue">failed</mentionClass>
+    </classMention>
+    <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>
+
