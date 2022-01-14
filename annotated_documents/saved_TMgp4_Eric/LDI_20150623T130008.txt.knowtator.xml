@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<annotations textSource="LDI_20150623T130008.txt">
+    <annotation>
+        <mention id="EHOST_Instance_2132" />
+        <annotator id="01">shu</annotator>
+        <span start="1910" end="1919" />
+        <spannedText>no longer</spannedText>
+        <creationDate>Fri Jan 14 12:04:55 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2132">
+        <mentionClass id="NegCue">no longer</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2133" />
+        <annotator id="01">shu</annotator>
+        <span start="2702" end="2704" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 12:06:49 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2133">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2134" />
+        <annotator id="01">shu</annotator>
+        <span start="3178" end="3180" />
+        <spannedText>in</spannedText>
+        <creationDate>Fri Jan 14 12:09:06 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2134">
+        <mentionClass id="NegCue">in</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2135" />
+        <annotator id="01">shu</annotator>
+        <span start="3230" end="3235" />
+        <spannedText>nâ€™t</spannedText>
+        <creationDate>Fri Jan 14 12:09:28 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2135">
+        <mentionClass id="NegCue">nâ€™t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2136" />
+        <annotator id="01">shu</annotator>
+        <span start="3273" end="3276" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 12:09:43 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2136">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2137" />
+        <annotator id="01">shu</annotator>
+        <span start="3534" end="3537" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 12:10:10 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2137">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2138" />
+        <annotator id="01">shu</annotator>
+        <span start="3699" end="3701" />
+        <spannedText>no</spannedText>
+        <creationDate>Fri Jan 14 12:10:36 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2138">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2139" />
+        <annotator id="01">shu</annotator>
+        <span start="3833" end="3838" />
+        <spannedText>nâ€™t</spannedText>
+        <creationDate>Fri Jan 14 12:13:03 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2139">
+        <mentionClass id="NegCue">nâ€™t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2140" />
+        <annotator id="01">shu</annotator>
+        <span start="4172" end="4175" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 12:13:26 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2140">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2141" />
+        <annotator id="01">shu</annotator>
+        <span start="4407" end="4409" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 12:13:54 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2141">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2142" />
+        <annotator id="01">shu</annotator>
+        <span start="4562" end="4565" />
+        <spannedText>non</spannedText>
+        <creationDate>Fri Jan 14 12:14:25 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2142">
+        <mentionClass id="NegCue">non</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2143" />
+        <annotator id="01">shu</annotator>
+        <span start="4624" end="4629" />
+        <spannedText>nâ€™t</spannedText>
+        <creationDate>Fri Jan 14 12:15:00 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2143">
+        <mentionClass id="NegCue">nâ€™t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2144" />
+        <annotator id="01">shu</annotator>
+        <span start="4758" end="4760" />
+        <spannedText>no</spannedText>
+        <creationDate>Fri Jan 14 12:15:28 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2144">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2145" />
+        <annotator id="01">shu</annotator>
+        <span start="4773" end="4780" />
+        <spannedText>without</spannedText>
+        <creationDate>Fri Jan 14 12:15:40 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2145">
+        <mentionClass id="NegCue">without</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2146" />
+        <annotator id="01">shu</annotator>
+        <span start="5403" end="5405" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 12:47:00 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2146">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2147" />
+        <annotator id="01">shu</annotator>
+        <span start="5679" end="5681" />
+        <spannedText>Un</spannedText>
+        <creationDate>Fri Jan 14 12:51:09 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2147">
+        <mentionClass id="NegCue">Un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2148" />
+        <annotator id="01">shu</annotator>
+        <span start="6173" end="6178" />
+        <spannedText>nâ€™t</spannedText>
+        <creationDate>Fri Jan 14 12:52:12 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2148">
+        <mentionClass id="NegCue">nâ€™t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2149" />
+        <annotator id="01">shu</annotator>
+        <span start="6189" end="6194" />
+        <spannedText>nâ€™t</spannedText>
+        <creationDate>Fri Jan 14 12:52:25 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2149">
+        <mentionClass id="NegCue">nâ€™t</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2150" />
+        <annotator id="01">shu</annotator>
+        <span start="6467" end="6470" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 12:52:48 CET 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2150">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2151" />
+        <annotator id="01">shu</annotator>
+        <span start="3484" end="3487" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 01:15:47 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2151">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2152" />
+        <annotator id="01">shu</annotator>
+        <span start="3649" end="3651" />
+        <spannedText>no</spannedText>
+        <creationDate>Fri Jan 14 01:16:00 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2152">
+        <mentionClass id="NegCue">no</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2153" />
+        <annotator id="01">shu</annotator>
+        <span start="4119" end="4122" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 01:16:22 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2153">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2154" />
+        <annotator id="01">shu</annotator>
+        <span start="4353" end="4355" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 01:16:43 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2154">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2155" />
+        <annotator id="01">shu</annotator>
+        <span start="4371" end="4374" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 01:26:33 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2155">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2156" />
+        <annotator id="01">shu</annotator>
+        <span start="4508" end="4511" />
+        <spannedText>non</spannedText>
+        <creationDate>Fri Jan 14 01:26:41 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2156">
+        <mentionClass id="NegCue">non</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2157" />
+        <annotator id="01">shu</annotator>
+        <span start="4715" end="4722" />
+        <spannedText>without</spannedText>
+        <creationDate>Fri Jan 14 01:55:35 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2157">
+        <mentionClass id="NegCue">without</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2158" />
+        <annotator id="01">shu</annotator>
+        <span start="5341" end="5343" />
+        <spannedText>un</spannedText>
+        <creationDate>Fri Jan 14 01:56:08 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2158">
+        <mentionClass id="NegCue">un</mentionClass>
+    </classMention>
+    <annotation>
+        <mention id="EHOST_Instance_2159" />
+        <annotator id="01">shu</annotator>
+        <span start="6394" end="6397" />
+        <spannedText>not</spannedText>
+        <creationDate>Fri Jan 14 01:57:01 CST 2022</creationDate>
+    </annotation>
+    <classMention id="EHOST_Instance_2159">
+        <mentionClass id="NegCue">not</mentionClass>
+    </classMention>
+    <eHOST_Adjudication_Status version="1.0">
+        <Adjudication_Selected_Annotators version="1.0" />
+        <Adjudication_Selected_Classes version="1.0" />
+        <Adjudication_Others>
+            <CHECK_OVERLAPPED_SPANS>false</CHECK_OVERLAPPED_SPANS>
+            <CHECK_ATTRIBUTES>false</CHECK_ATTRIBUTES>
+            <CHECK_RELATIONSHIP>false</CHECK_RELATIONSHIP>
+            <CHECK_CLASS>false</CHECK_CLASS>
+            <CHECK_COMMENT>false</CHECK_COMMENT>
+        </Adjudication_Others>
+    </eHOST_Adjudication_Status>
+</annotations>
+
