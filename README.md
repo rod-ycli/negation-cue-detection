@@ -9,3 +9,5 @@ YC Roderick Li, Shuyi Shen, Panagiota Tselenti and Lahorka Nikolovski.
 ./annotated_documents
 
 This directory contains the 4 sets of annotations of negation cues for Assignment 2, each with 10 documents.
+
+### HOW TO COLABORATE
