@@ -27,9 +27,12 @@ def extract_tokenized_sentences(file_path: str) -> List[List[str]]:
 
 # inspired by
 # https://stackoverflow.com/questions/25534214/nltk-wordnet-lemmatizer-shouldnt-it-lemmatize-all-inflections-of-a-word
-def get_wordnet_pos_tag(treebank_tag: str) -> str:
-    """Transform a TreeBank POS tag into a WordNet POS tag and return it."""
-    tag = treebank_tag[0].lower()  # look only at the first letter of the treebank_tag, it already has all info
+def transform_pen_treebank_pos_tag(pen_treebank_pos_tag: str) -> str:
+    """Transform a TreeBank PoS tag into a PoS tag that can be passed to WordNet Lemmatizer and return it."""
+    # valid options for WordNetLemmatizer PoS tags  are “n” for nouns, “v” for verbs, “a” for adjectives, “r” for
+    # adverbs and “s” for satellite adjectives, https://www.nltk.org/api/nltk.stem.wordnet.html
+
+    tag = pen_treebank_pos_tag[0].lower()  # only look at the first letter, it already has all the info we need
     if tag == 'j':  # adjective
         return 'a'
     elif tag in ['n', 'r', 'v']:  # noun, adverb, verb
@@ -46,7 +49,7 @@ def lemmatize_pos_tagged_sentences(pos_tagged_sentences: List[List[tuple]]) -> L
     for pos_tagged_sentence in pos_tagged_sentences:
         sentence_lemmas = []
         for token, tag in pos_tagged_sentence:
-            sentence_lemmas.append(lemmatizer.lemmatize(token, get_wordnet_pos_tag(tag)))
+            sentence_lemmas.append(lemmatizer.lemmatize(token, transform_pen_treebank_pos_tag(tag)))
         lemmatized_sentences.append(sentence_lemmas)
 
     return lemmatized_sentences
@@ -63,6 +66,7 @@ def generate_preprocessed_file(infile_path: str, outfile_path: str, lemmatized_s
 
             sentence_index = 0
             token_index = 0
+
             for inrow in filereader:
                 if not inrow:  # empty line
                     filewriter.writerow(inrow)  # write an empty row to output file
