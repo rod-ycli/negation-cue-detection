@@ -1,3 +1,4 @@
 data/*.txt
 code/.ipynb_checkpoints/
 code/.idea
+.idea
