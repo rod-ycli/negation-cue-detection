@@ -1,4 +1,5 @@
 import csv
+import os
 import sys
 from nltk import pos_tag, WordNetLemmatizer
 from typing import List
@@ -66,7 +67,6 @@ def generate_preprocessed_file(infile_path: str, outfile_path: str, lemmatized_s
 
             sentence_index = 0
             token_index = 0
-
             for inrow in filereader:
                 if not inrow:  # empty line
                     filewriter.writerow(inrow)  # write an empty row to output file
@@ -81,14 +81,20 @@ def generate_preprocessed_file(infile_path: str, outfile_path: str, lemmatized_s
 
 def main() -> None:
     """Preprocess input file and save a preprocessed version of it."""
-    path = sys.argv[1]
+    paths = sys.argv[1:]
 
-    tokenized_sentences = extract_tokenized_sentences(path)
-    pos_tagged_sentences = [pos_tag(sentence) for sentence in tokenized_sentences]
-    lemmatized_sentences = lemmatize_pos_tagged_sentences(pos_tagged_sentences)
+    if not paths:
+        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2.txt',
+                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2.txt']
 
-    preprocessed_path = path.replace('.txt', '_preprocessed.txt')
-    generate_preprocessed_file(path, preprocessed_path, lemmatized_sentences, pos_tagged_sentences)
+    for path in paths:
+        print(f'Preprocessing {os.path.basename(path)}')
+        tokenized_sentences = extract_tokenized_sentences(path)
+        pos_tagged_sentences = [pos_tag(sentence) for sentence in tokenized_sentences]
+        lemmatized_sentences = lemmatize_pos_tagged_sentences(pos_tagged_sentences)
+
+        preprocessed_path = path.replace('.txt', '_preprocessed.txt')
+        generate_preprocessed_file(path, preprocessed_path, lemmatized_sentences, pos_tagged_sentences)
 
 
 if __name__ == '__main__':
