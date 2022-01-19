@@ -1,3 +1,4 @@
 data/*.txt
-data/*.tsv
-data/*.csv
+code/.ipynb_checkpoints/
+code/.idea
+.idea
