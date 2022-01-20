@@ -1,42 +1,29 @@
+import os
 import sys
 import pandas as pd
-import csv
-import os
-from typing import List, Dict
-import nltk
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
 
-# Create negation prefix set and suffix set
-# Negation affixes are acquired from the training and dev data sets
-neg_prefix = {"dis", "im", "in", "ir", "un"}
-neg_suffix = {"less", "lessness", "lessly"}
 
-# Create corpus vocab set that unions the two biggest corpora in NLTK.
-# Words are stemmed
-ps = PorterStemmer()
-print("Building vocab set...")
-vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
-print("Done")
-
-
-def pos_category_extraction(postag):
+def generate_pos_category(pos_tags):
     """
-    Function to extract part-of-speech tags 
-    and assign POS tags to six categories as follows:
-    ADJ, NN, ADV, VB, PRO, and OTH .
-    :param tokens: list with tokens
+    Function to extract part-of-speech tags and assign POS tags to six categories as follows: ADJ, NN, ADV, VB, PRO,
+    and OTH.
+    :param pos_tags: list with pos_tags
     :return: list with POS tags categories
     """
     pos_list = []
-    adj = ['JJ','JJR','JJS']
-    nn = ['NN','NNS','NNP','NNPS']
-    adv = ['RB','RBR','RBS']
-    vb = ['VB','VBD','VBG','VBN','VBP','VBZ']
-    pro = ['PRP','PRP$']
+
+    adj = ['JJ', 'JJR', 'JJS']
+    nn = ['NN', 'NNS', 'NNP', 'NNPS']
+    adv = ['RB', 'RBR', 'RBS']
+    vb = ['VB', 'VBD', 'VBG', 'VBN', 'VBP', 'VBZ']
+    pro = ['PRP', 'PRP$']
    
-    for pos_tag in postag:
-        if pos_tag in adj:
+    for pos_tag in pos_tags:
+        if not pos_tag:  # if we had an empty row in our data set
+            pos_list.append('')
+        elif pos_tag in adj:
             pos_list.append('ADJ')   
         elif pos_tag in nn:
             pos_list.append('NN')  
@@ -51,67 +38,75 @@ def pos_category_extraction(postag):
         
     return pos_list
 
-def previous_and_next_token_extraction(tokens):
+
+def extract_previous_and_next(elements):
     """
-    Function to extract previous and preceding token and lemma
-    from tokens and lemma list obtained from preprocessing.py.
-    :param tokens: list with tokens or lemmas
-    :return: list with previous tokens/lemmas, list with next tokens/lemas
+    Function to extract previous and preceding token or lemma from a list of tokens or lemmas
+    :param elements: list with tokens or lemmas
+    :return: list with previous tokens/lemmas, list with next tokens/lemmas
     """
     position_index = 0
 
     prev_tokens = []
     next_tokens = []
     
-    for i in range(len(tokens)):
+    for i in range(len(elements)):
 
         prev_index = (position_index - 1)
         next_index = (position_index + 1)
         
-        #previous token
+        # previous token
         if prev_index < 0:
             previous_token = "bos"
+
         else: 
-            previous_token = tokens[prev_index]
+            previous_token = elements[prev_index]
+            if previous_token == '':  # if there's an empty line before this token
+                previous_token = "bos"
 
         prev_tokens.append(previous_token)
             
-        #next token
-        if next_index < len(tokens):
-            next_token = tokens[next_index]
+        # next token
+        if next_index < len(elements):
+            next_token = elements[next_index]
+            if next_token == '':  # if there's an empty line after this token
+                next_token = 'eos'
         else: 
             next_token = "eos"
 
         next_tokens.append(next_token)
             
-        #moving to next token in list 
+        # moving to next token in list
         position_index += 1
     
     return prev_tokens, next_tokens
 
 
-def new_function(x):
-    
-    if  x[3]:
-        pass
-    else:
-        
-        x[3] = 'EOS'
-        x[4] = 'EOS'
-    return x 
-
-def get_affixal_and_base_features(tokens: list) -> tuple:
-    """This function extracts affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
+def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -> tuple:
+    """Extract affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
     :return: tuple of four lists of the features."""
     has_affix = []
     affix = []
     stem_is_word = []
     stem = []
 
+    ps = PorterStemmer()
+
     for token in tokens:
+
+        if not token:  # empty line
+            has_affix_val, affix_val, stem_is_word_val, stem_val = '', '', '', ''
+
+        # Assign values if the token doesn't have the affixes
+        else:
+            has_affix_val = 0
+            affix_val = ""
+            stem_is_word_val = 0
+            stem_val = ""
+
         for prefix in neg_prefix:
             # If the token starts with one of the prefixes
-            if token.startswith(prefix) and token!=prefix:
+            if token.startswith(prefix) and token != prefix:
                 # has_affix has value 1
                 has_affix_val = 1
                 # Feature 'affix' captures the prefix
@@ -130,7 +125,7 @@ def get_affixal_and_base_features(tokens: list) -> tuple:
             else:
                 # Check if the token ends with one of the suffixes
                 for suffix in neg_suffix:
-                    if token.endswith(suffix) and token!=suffix:
+                    if token.endswith(suffix) and token != suffix:
                         has_affix_val = 1
                         affix_val = suffix
                         # Check if the stem of the base appears in the vocab set
@@ -142,12 +137,6 @@ def get_affixal_and_base_features(tokens: list) -> tuple:
                             stem_is_word_val = 0
                             stem_val = ""
                         break
-                    # Assign values if the token doesn't have the affixes
-                    else:
-                        has_affix_val = 0
-                        affix_val = ""
-                        stem_is_word_val = 0
-                        stem_val = ""
 
         # Appending the values to the lists
         has_affix.append(has_affix_val)
@@ -158,7 +147,7 @@ def get_affixal_and_base_features(tokens: list) -> tuple:
     return has_affix, affix, stem_is_word, stem
 
 
-def write_features(input_file):
+def write_features(input_file, neg_prefix, neg_suffix, vocab):
     """
     Function to generate a new file containing extended features:
     pos_category, preceding and next tokens as well as lemmas.
@@ -168,22 +157,20 @@ def write_features(input_file):
     as well as postag category.    
     """
     # Prepare output file
-    output_file = input_file.replace('_preprocessed.txt', '-features.txt')
+    output_file = input_file.replace('_preprocessed.txt', '_features.txt')
 
     # Read in preprocessed file
     input_data = pd.read_csv(input_file, encoding='utf-8', sep='\t', header=None, keep_default_na=False,     
-                             quotechar='\\', skip_blank_lines=False)\
-   
+                             quotechar='\\', skip_blank_lines=False)
 
-    input_data = input_data.apply(lambda x: new_function(x), axis=1)
-    
-    books = input_data.iloc[:, 0]
-    sent_num = input_data.iloc[:, 1]
-    token_num = input_data.iloc[:, 2]
-    tokens = input_data.iloc[:, 3].astype('str').apply(lambda x: x.lower())
-    lemmas = input_data.iloc[:, 4].astype('str').apply(lambda x: x.lower())
-    pos_tags = input_data.iloc[:, 5]
-    labels = input_data.iloc[:, -1]
+    books = input_data[0]
+    sent_num = input_data[1]
+    token_num = input_data[2]
+    tokens = input_data[3].astype('str').apply(lambda x: x.lower())
+    lemmas = input_data[4].astype('str').apply(lambda x: x.lower())
+    pos_tags = input_data[5]
+    labels = input_data[6]
+
     # Defining header names
     feature_names = ["books",
                     "sent_num",
@@ -194,39 +181,37 @@ def write_features(input_file):
                     "pos_category",     
                     "prev_token",
                     "next_token",
-                    "prev_lemmas",
-                    "next_lemmas",
+                    "prev_lemma",
+                    "next_lemma",
                     "has_affix",
                     "affix",
                     "stem_is_word",
                     "stem",
                     "gold_label"]
 
-  
+    # Extracting features
+    prev_tokens, next_tokens = extract_previous_and_next(tokens)
     
-    prev_tokens, next_tokens = previous_and_next_token_extraction(tokens)    
-    
-    pos_category = pos_category_extraction(pos_tags)
+    pos_category = generate_pos_category(pos_tags)
 
-    prev_lemmas, next_lemmas = previous_and_next_token_extraction(lemmas)
+    prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
 
-    has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens)
+    has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens, neg_prefix, neg_suffix, vocab)
 
-    # Defining feature names for writing to output file 
-    features_dict = {'books':books, 'sent_num':sent_num, 'token_num':token_num,
-                     'token': tokens, 'pos_tag': pos_tags,'pos_category': pos_category,'lemma': lemmas, 
+    # Defining feature values for writing to output file
+    features_dict = {'books': books, 'sent_num': sent_num, 'token_num': token_num,
+                     'token': tokens, 'pos_tag': pos_tags,'pos_category': pos_category, 'lemma': lemmas,
                      'prev_token': prev_tokens, 'next_token': next_tokens,   
-                     'prev_lemmas':prev_lemmas,'next_lemmas':next_lemmas,
+                     'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'has_affix': has_affix, 'affix': affix,
                      'stem_is_word': stem_is_word, 'stem': stem,
                      'gold_label': labels}
 
     features_df = pd.DataFrame(features_dict, columns=feature_names)
-    
-    
+    features_df_clean = features_df[features_df['books'] != '']  # drop empty rows
 
-    # Writing features names to file 
-    features_df.to_csv(output_file, sep='\t', index=False)
+    # Writing features to file
+    features_df_clean.to_csv(output_file, sep='\t', index=False)
 
 
 def main() -> None:
@@ -235,10 +220,23 @@ def main() -> None:
 
     if not paths:
         paths = ['../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_preprocessed.txt',
-         '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
+                 '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
+
+    # Create negation prefix set and suffix set
+    # Negation affixes are acquired from the training and dev data sets
+    neg_prefix = {"dis", "im", "in", "ir", "un"}
+    neg_suffix = {"less", "lessness", "lessly"}
+
+    # Create corpus vocab set that unions the two biggest corpora in NLTK.
+    # Words are stemmed
+    ps = PorterStemmer()
+    print("Building vocab set. This will take a while.")
+    vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
+    print("Done")
 
     for path in paths:
-        write_features(path)
+        print(f'Extracting features from {os.path.basename(path)}')
+        write_features(path, neg_prefix, neg_suffix, vocab)
     
 
 if __name__ == '__main__':
