@@ -1,5 +1,9 @@
 import sys
 import pandas as pd
+import csv
+import os
+from typing import List, Dict
+import nltk
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
 
@@ -14,6 +18,7 @@ ps = PorterStemmer()
 print("Building vocab set...")
 vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
 print("Done")
+
 
 def pos_category_extraction(postag):
     """
@@ -65,7 +70,7 @@ def previous_and_next_token_extraction(tokens):
         
         #previous token
         if prev_index < 0:
-            previous_token = "BOS"
+            previous_token = "bos"
         else: 
             previous_token = tokens[prev_index]
 
@@ -75,7 +80,7 @@ def previous_and_next_token_extraction(tokens):
         if next_index < len(tokens):
             next_token = tokens[next_index]
         else: 
-            next_token = "EOS"
+            next_token = "eos"
 
         next_tokens.append(next_token)
             
@@ -83,6 +88,17 @@ def previous_and_next_token_extraction(tokens):
         position_index += 1
     
     return prev_tokens, next_tokens
+
+
+def new_function(x):
+    
+    if  x[3]:
+        pass
+    else:
+        
+        x[3] = 'EOS'
+        x[4] = 'EOS'
+    return x 
 
 def get_affixal_and_base_features(tokens: list) -> tuple:
     """This function extracts affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
@@ -141,6 +157,7 @@ def get_affixal_and_base_features(tokens: list) -> tuple:
 
     return has_affix, affix, stem_is_word, stem
 
+
 def write_features(input_file):
     """
     Function to generate a new file containing extended features:
@@ -155,15 +172,16 @@ def write_features(input_file):
 
     # Read in preprocessed file
     input_data = pd.read_csv(input_file, encoding='utf-8', sep='\t', header=None, keep_default_na=False,     
-                             quotechar='\\', skip_blank_lines=False)
+                             quotechar='\\', skip_blank_lines=False)\
+   
+
+    input_data = input_data.apply(lambda x: new_function(x), axis=1)
     
     books = input_data.iloc[:, 0]
     sent_num = input_data.iloc[:, 1]
     token_num = input_data.iloc[:, 2]
-    tokens = input_data.iloc[:, 3]
-    tokens = [str(token.lower()) for token in tokens]
-    lemmas = input_data.iloc[:, 4]
-    lemmas = [str(lemma.lower()) for lemma in lemmas]
+    tokens = input_data.iloc[:, 3].astype('str').apply(lambda x: x.lower())
+    lemmas = input_data.iloc[:, 4].astype('str').apply(lambda x: x.lower())
     pos_tags = input_data.iloc[:, 5]
     labels = input_data.iloc[:, -1]
     # Defining header names
@@ -184,7 +202,8 @@ def write_features(input_file):
                     "stem",
                     "gold_label"]
 
-
+  
+    
     prev_tokens, next_tokens = previous_and_next_token_extraction(tokens)    
     
     pos_category = pos_category_extraction(pos_tags)
