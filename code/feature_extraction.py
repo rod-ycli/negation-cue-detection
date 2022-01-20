@@ -1,9 +1,5 @@
-import csv
-import os
 import sys
-from typing import List, Dict
 import pandas as pd
-import nltk
 
 
 def pos_category_extraction(postag):
