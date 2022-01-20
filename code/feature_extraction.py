@@ -1,11 +1,9 @@
 import sys
 import pandas as pd
-<<<<<<< HEAD
 import csv
 import os
 from typing import List, Dict
 import nltk
-=======
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
 
@@ -20,7 +18,7 @@ ps = PorterStemmer()
 print("Building vocab set...")
 vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
 print("Done")
->>>>>>> 0112e70ddb18de773b47f0f0a3caae7046132878
+
 
 def pos_category_extraction(postag):
     """
@@ -91,7 +89,7 @@ def previous_and_next_token_extraction(tokens):
     
     return prev_tokens, next_tokens
 
-<<<<<<< HEAD
+
 def new_function(x):
     
     if  x[3]:
@@ -101,7 +99,7 @@ def new_function(x):
         x[3] = 'EOS'
         x[4] = 'EOS'
     return x 
-=======
+
 def get_affixal_and_base_features(tokens: list) -> tuple:
     """This function extracts affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
     :return: tuple of four lists of the features."""
@@ -158,7 +156,7 @@ def get_affixal_and_base_features(tokens: list) -> tuple:
         stem.append(stem_val)
 
     return has_affix, affix, stem_is_word, stem
->>>>>>> 0112e70ddb18de773b47f0f0a3caae7046132878
+
 
 def write_features(input_file):
     """
@@ -182,17 +180,8 @@ def write_features(input_file):
     books = input_data.iloc[:, 0]
     sent_num = input_data.iloc[:, 1]
     token_num = input_data.iloc[:, 2]
-<<<<<<< HEAD
     tokens = input_data.iloc[:, 3].astype('str').apply(lambda x: x.lower())
- 
     lemmas = input_data.iloc[:, 4].astype('str').apply(lambda x: x.lower())
-   
-=======
-    tokens = input_data.iloc[:, 3]
-    tokens = [str(token.lower()) for token in tokens]
-    lemmas = input_data.iloc[:, 4]
-    lemmas = [str(lemma.lower()) for lemma in lemmas]
->>>>>>> 0112e70ddb18de773b47f0f0a3caae7046132878
     pos_tags = input_data.iloc[:, 5]
     labels = input_data.iloc[:, -1]
     # Defining header names
