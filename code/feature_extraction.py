@@ -7,8 +7,7 @@ from nltk.stem import PorterStemmer
 
 def generate_pos_category(pos_tags):
     """
-    Function to extract part-of-speech tags and assign POS tags to six categories as follows: ADJ, NN, ADV, VB, PRO,
-    and OTH.
+    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, and OTH.
     :param pos_tags: list with pos_tags
     :return: list with POS tags categories
     """
@@ -41,7 +40,7 @@ def generate_pos_category(pos_tags):
 
 def extract_previous_and_next(elements):
     """
-    Function to extract previous and preceding token or lemma from a list of tokens or lemmas
+    Extract previous and preceding token or lemma from a list of tokens or lemmas
     :param elements: list with tokens or lemmas
     :return: list with previous tokens/lemmas, list with next tokens/lemmas
     """
@@ -83,8 +82,10 @@ def extract_previous_and_next(elements):
 
 
 def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -> tuple:
-    """Extract affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
-    :return: tuple of four lists of the features."""
+    """
+    Extract affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
+    :return: tuple of four lists of the features.
+    """
     has_affix = []
     affix = []
     stem_is_word = []
@@ -149,12 +150,8 @@ def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -
 
 def write_features(input_file, neg_prefix, neg_suffix, vocab):
     """
-    Function to generate a new file containing extended features:
-    pos_category, preceding and next tokens as well as lemmas.
-    
+    Generate a new file containing extracted features.
     :param input_file: the path to preprocessed file
-    :return: a new file extended with previous and next tokens/lemmas, 
-    as well as postag category.    
     """
     # Prepare output file
     output_file = input_file.replace('_preprocessed.txt', '_features.txt')
@@ -215,7 +212,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
 
 
 def main() -> None:
-    """Extend the features for preprocessed file and save a features-added version of it."""
+    """Extend the features for preprocessed file and save a features-added version."""
     paths = sys.argv[1:]
 
     if not paths:
