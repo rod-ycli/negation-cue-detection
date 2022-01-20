@@ -59,7 +59,7 @@ def lemmatize_pos_tagged_sentences(pos_tagged_sentences: List[List[tuple]]) -> L
 def generate_preprocessed_file(infile_path: str, outfile_path: str, lemmatized_sentences: List[List[str]],
                                pos_tagged_sentences: List[List[tuple]]) -> None:
     """Generate a new file containing information obtained through preprocessing."""
-    with open(outfile_path, 'w', encoding='utf8') as outfile:
+    with open(outfile_path, 'w',  newline='', encoding='utf8') as outfile:
         filewriter = csv.writer(outfile, delimiter='\t', quotechar='\\')
 
         with open(infile_path, 'r', encoding='utf8') as infile:
