@@ -17,20 +17,30 @@ Files used for this project are specified below and can be obtained through the 
 2. SEM-2012-SharedTask-CD-SCO-dev-simple.v2.txt
 
 #### ./code
-This directory contains all the code. The scripts should be run in the order specified below to ensure experimental 
-results are reproduced.
+This directory contains all the code. The scripts should be run in the order specified below to ensure experimental results are reproduced.
 
 ##### Step 1.
 
 Run the `processing.py` script.
 
-The script can be run from the command line, passing one or more arguments specifying the path(s) to the .txt file(s) 
-to be preprocessed:
+The script can be run from the command line, passing one or more arguments specifying the path(s) to the .txt file(s) to be preprocessed:
 
 `python preprocessing.py [path_to_file] ... [path_to_file]`
 
-Alternatively, running the script as is will preprocess all the files needed for the the experiment. In that case, make sure the files are in the data directory and that you execute the script from 
-the code directory, or that you adjust the paths.
+Alternatively, running the script as is will preprocess all the files needed for the the experiment. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
 
-As a results of running the script, for every preprocessed file a new file containing preprocessed data will be 
-generated in the same directory as the original file.
+As a results of running the script, for every preprocessed file a new .txt file containing preprocessed data will be created in the same directory as the original file.
+
+##### Step 2.
+Run the `feature_extraction.py` script.
+
+The script can be run from the command line, passing one or more arguments specifying the path(s) to the preprocessed .txt file(s) obtained in the last step:
+
+`python feature_extraction.py [path_to_file] ... [path_to_file]`
+
+Alternatively, running the script as is will create all feature files needed for the the experiment. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
+
+As a result of running the script, .txt file(s) containing the features will be created in the same directory that stores the original files(s).
+
+###### Bonus: Exploratory Data Analysis notebook
+EDA.ipynb was used the explore the training and development datasets.
