@@ -1,19 +1,18 @@
 import os
+import string
 import sys
 import pandas as pd
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
-import re
 
 
 def generate_pos_category(pos_tags):
     """
-    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, PUNCT and OTH.
+    Assign part-of-speech tags to seven categories as follows: ADJ, NN, ADV, VB, PRO, PUNCT and OTH.
     :param pos_tags: list with pos_tags
     :return: list with POS tags categories
     """
     pos_list = []
-    Punctuations = re.findall("[^\w\s]+", ''.join(pos_tags)) 
     adj = ['JJ', 'JJR', 'JJS']
     nn = ['NN', 'NNS', 'NNP', 'NNPS']
     adv = ['RB', 'RBR', 'RBS']
@@ -21,10 +20,10 @@ def generate_pos_category(pos_tags):
     pro = ['PRP', 'PRP$']
    
     for pos_tag in pos_tags:
-        if not pos_tag:  # if we had an empty row in our data set
+        if not pos_tag:  # if we have an empty row
             pos_list.append('')
         elif pos_tag in adj:
-            pos_list.append('ADJ')   
+            pos_list.append('ADJ')
         elif pos_tag in nn:
             pos_list.append('NN')  
         elif pos_tag in adv:
@@ -33,7 +32,7 @@ def generate_pos_category(pos_tags):
             pos_list.append('PRO')  
         elif pos_tag in vb:
             pos_list.append('VERB')  
-        elif pos_tag in Punctuations or pos_tag =='POS': #"'" is labelled as "POS" in NLTK pos_tag
+        elif pos_tag[0] in string.punctuation:
             pos_list.append('PUNCT') 
         else:
             pos_list.append('OTH')  
@@ -208,7 +207,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
 
     # Defining feature values for writing to output file
     features_dict = {'book': books, 'sent_num': sent_num, 'token_num': token_num,
-                     'token': tokens, 'pos_tag': pos_tags,'pos_category': pos_category, 'lemma': lemmas,
+                     'token': tokens, 'pos_tag': pos_tags, 'pos_category': pos_category, 'lemma': lemmas,
                      'prev_token': prev_tokens, 'next_token': next_tokens,   
                      'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'has_affix': has_affix, 'affix': affix,
