@@ -170,59 +170,37 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     input_data = pd.read_csv(input_file, encoding='utf-8', sep='\t', header=None, keep_default_na=False,     
                              quotechar='\\', skip_blank_lines=False)
 
-    books = input_data[0]
-    sent_num = input_data[1]
-    token_num = input_data[2]
+    # Extracting features and labels
     tokens = input_data[3].astype('str').apply(lambda x: x.lower())
     lemmas = input_data[4].astype('str').apply(lambda x: x.lower())
     pos_tags = input_data[5]
     labels = input_data[6]
 
-    # Defining header names
-    feature_names = ["book",
-                    "sent_num",
-                    "token_num",      
-                    "token",
-                    "lemma",
-                    "pos_tag",
-                    "pos_category",     
-                    "prev_token",
-                    "next_token",
-                    "prev_lemma",
-                    "next_lemma",
-                    "has_affix",
-                    "affix",
-                    "stem_is_word",
-                    "stem",
-                    "gold_label"]
-
-    # Extracting features
+    # Extracting additional features
     prev_tokens, next_tokens = extract_previous_and_next(tokens)
-    
-    pos_category = generate_pos_category(pos_tags)
-
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
+    pos_categories = generate_pos_category(pos_tags)
+
+    # add 'is_neg_ex'
 
     has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens, neg_prefix, neg_suffix, vocab)
 
     # Defining feature values for writing to output file
-    features_dict = {'book': books, 'sent_num': sent_num, 'token_num': token_num,
-                     'token': tokens, 'pos_tag': pos_tags, 'pos_category': pos_category, 'lemma': lemmas,
-                     'prev_token': prev_tokens, 'next_token': next_tokens,   
-                     'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
-                     'has_affix': has_affix, 'affix': affix,
-                     'stem_is_word': stem_is_word, 'stem': stem,
+    features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
+                     'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
+                     'pos_tag': pos_tags, 'pos_category': pos_categories,
+                     # add 'is_neg_ex'
+                     'has_affix': has_affix, 'affix': affix, 'stem_is_word': stem_is_word, 'stem': stem,
                      'gold_label': labels}
 
+    # Defining header names
+    feature_names = features_dict.keys()
+
     features_df = pd.DataFrame(features_dict, columns=feature_names)
+    # Remove empty rows
+    features_df_clean = features_df[features_df['token'] != '']
 
     # Writing features to file
-
-    # features_df.to_csv(output_file, sep='\t', index=False)  # uncomment & comment the lines below to keep empty lines
-
-    # If we want to get rid of empty lines, we use the next two lines
-
-    features_df_clean = features_df[features_df['book'] != '']  # drop empty rows
     features_df_clean.to_csv(output_file, sep='\t', index=False)
 
 
