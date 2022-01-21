@@ -3,16 +3,17 @@ import sys
 import pandas as pd
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
+import re
 
 
 def generate_pos_category(pos_tags):
     """
-    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, and OTH.
+    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, PUNCT and OTH.
     :param pos_tags: list with pos_tags
     :return: list with POS tags categories
     """
     pos_list = []
-
+    Punctuations = re.findall("[^\w\s]+", ''.join(pos_tags)) 
     adj = ['JJ', 'JJR', 'JJS']
     nn = ['NN', 'NNS', 'NNP', 'NNPS']
     adv = ['RB', 'RBR', 'RBS']
@@ -32,6 +33,8 @@ def generate_pos_category(pos_tags):
             pos_list.append('PRO')  
         elif pos_tag in vb:
             pos_list.append('VERB')  
+        elif pos_tag in Punctuations or pos_tag =='POS': #"'" is labelled as "POS" in NLTK pos_tag
+            pos_list.append('PUNCT') 
         else:
             pos_list.append('OTH')  
         
@@ -48,7 +51,9 @@ def extract_previous_and_next(elements):
 
     prev_tokens = []
     next_tokens = []
-    
+
+    bos_previous, eos_next = False, False  # flags to tell us where sentences end
+
     for i in range(len(elements)):
 
         prev_index = (position_index - 1)
@@ -58,18 +63,28 @@ def extract_previous_and_next(elements):
         if prev_index < 0:
             previous_token = "bos"
 
-        else: 
+        else:
             previous_token = elements[prev_index]
             if previous_token == '':  # if there's an empty line before this token
                 previous_token = "bos"
+                bos_previous = True
+
+            if bos_previous:
+                prev_tokens[position_index - 1] = ''
+                bos_previous = False
 
         prev_tokens.append(previous_token)
             
         # next token
-        if next_index < len(elements):
+        if eos_next:
+            next_token = ''
+            eos_next = False
+
+        elif next_index < len(elements):
             next_token = elements[next_index]
             if next_token == '':  # if there's an empty line after this token
                 next_token = 'eos'
+                eos_next = True
         else: 
             next_token = "eos"
 
@@ -105,25 +120,24 @@ def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -
             stem_is_word_val = 0
             stem_val = ""
 
-        for prefix in neg_prefix:
-            # If the token starts with one of the prefixes
-            if token.startswith(prefix) and token != prefix:
-                # has_affix has value 1
-                has_affix_val = 1
-                # Feature 'affix' captures the prefix
-                affix_val = prefix
-                # If the base_stem is also in our vocab set
-                base_stem = ps.stem(token.replace(prefix, "", 1))
-                if base_stem in vocab:
-                    # stem_is_word has value 1
-                    stem_is_word_val = 1
-                    # Feature 'stem' captures the base
-                    stem_val = base_stem
-                else:
-                    stem_is_word_val = 0
-                    stem_val = ""
-                break
-            else:
+        # Check if the token does have the affixes; if it does, the values will be changed
+            for prefix in neg_prefix:
+                # If the token starts with one of the prefixes
+                if token.startswith(prefix) and token != prefix:
+                    # has_affix has value 1
+                    has_affix_val = 1
+                    # Feature 'affix' captures the prefix
+                    affix_val = prefix
+                    # If the base_stem is also in our vocab set
+                    base_stem = ps.stem(token.replace(prefix, "", 1))
+                    if base_stem in vocab:
+                        # stem_is_word has value 1
+                        stem_is_word_val = 1
+                        # Feature 'stem' captures the base
+                        stem_val = base_stem
+                    break
+
+            if not has_affix_val:  # if token doesn't have a prefix
                 # Check if the token ends with one of the suffixes
                 for suffix in neg_suffix:
                     if token.endswith(suffix) and token != suffix:
@@ -134,9 +148,6 @@ def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -
                         if base_stem in vocab:
                             stem_is_word_val = 1
                             stem_val = base_stem
-                        else:
-                            stem_is_word_val = 0
-                            stem_val = ""
                         break
 
         # Appending the values to the lists
@@ -169,7 +180,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     labels = input_data[6]
 
     # Defining header names
-    feature_names = ["books",
+    feature_names = ["book",
                     "sent_num",
                     "token_num",      
                     "token",
@@ -196,7 +207,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens, neg_prefix, neg_suffix, vocab)
 
     # Defining feature values for writing to output file
-    features_dict = {'books': books, 'sent_num': sent_num, 'token_num': token_num,
+    features_dict = {'book': books, 'sent_num': sent_num, 'token_num': token_num,
                      'token': tokens, 'pos_tag': pos_tags,'pos_category': pos_category, 'lemma': lemmas,
                      'prev_token': prev_tokens, 'next_token': next_tokens,   
                      'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
@@ -205,9 +216,14 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
                      'gold_label': labels}
 
     features_df = pd.DataFrame(features_dict, columns=feature_names)
-    features_df_clean = features_df[features_df['books'] != '']  # drop empty rows
 
     # Writing features to file
+
+    # features_df.to_csv(output_file, sep='\t', index=False)  # uncomment & comment the lines below to keep empty lines
+
+    # If we want to get rid of empty lines, we use the next two lines
+
+    features_df_clean = features_df[features_df['book'] != '']  # drop empty rows
     features_df_clean.to_csv(output_file, sep='\t', index=False)
 
 
