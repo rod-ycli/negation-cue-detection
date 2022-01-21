@@ -3,16 +3,17 @@ import sys
 import pandas as pd
 from nltk.corpus import brown, gutenberg
 from nltk.stem import PorterStemmer
+import re
 
 
 def generate_pos_category(pos_tags):
     """
-    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, and OTH.
+    Assign part-of-speech tags to six categories as follows: ADJ, NN, ADV, VB, PRO, PUNCT and OTH.
     :param pos_tags: list with pos_tags
     :return: list with POS tags categories
     """
     pos_list = []
-
+    Punctuations = re.findall("[^\w\s]+", ''.join(pos_tags)) 
     adj = ['JJ', 'JJR', 'JJS']
     nn = ['NN', 'NNS', 'NNP', 'NNPS']
     adv = ['RB', 'RBR', 'RBS']
@@ -32,6 +33,8 @@ def generate_pos_category(pos_tags):
             pos_list.append('PRO')  
         elif pos_tag in vb:
             pos_list.append('VERB')  
+        elif pos_tag in Punctuations or pos_tag =='POS': #"'" is labelled as "POS" in NLTK pos_tag
+            pos_list.append('PUNCT') 
         else:
             pos_list.append('OTH')  
         
