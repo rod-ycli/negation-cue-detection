@@ -236,7 +236,8 @@ def main() -> None:
 
     # Create negation prefix set and suffix set
     # Negation affixes are acquired from the training and dev data sets
-    neg_prefix = {"dis", "im", "in", "ir", "un"}
+    # Common negation prefix "non-" is manually added
+    neg_prefix = {"dis", "im", "in", "ir", "un", "non"}
     neg_suffix = {"less", "lessness", "lessly"}
 
     # Create corpus vocab set that unions the two biggest corpora in NLTK.
