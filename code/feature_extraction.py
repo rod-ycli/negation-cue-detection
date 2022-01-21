@@ -133,18 +133,19 @@ def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -
                         # Feature 'stem' captures the base
                         stem_val = base_stem
                     break
-                else:
-                    # Check if the token ends with one of the suffixes
-                    for suffix in neg_suffix:
-                        if token.endswith(suffix) and token != suffix:
-                            has_affix_val = 1
-                            affix_val = suffix
-                            # Check if the stem of the base appears in the vocab set
-                            base_stem = ps.stem(token.replace(suffix, "", 1))
-                            if base_stem in vocab:
-                                stem_is_word_val = 1
-                                stem_val = base_stem
-                            break
+
+            if not has_affix_val:  # if token doesn't have a prefix
+                # Check if the token ends with one of the suffixes
+                for suffix in neg_suffix:
+                    if token.endswith(suffix) and token != suffix:
+                        has_affix_val = 1
+                        affix_val = suffix
+                        # Check if the stem of the base appears in the vocab set
+                        base_stem = ps.stem(token.replace(suffix, "", 1))
+                        if base_stem in vocab:
+                            stem_is_word_val = 1
+                            stem_val = base_stem
+                        break
 
         # Appending the values to the lists
         has_affix.append(has_affix_val)
