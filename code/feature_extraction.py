@@ -118,10 +118,10 @@ def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg
             base_is_word_val = 0
             base_val = ""
             
-            if lemma in single_neg_cues:
+            if lemma in single_neg_cues: #checking if lemma is found in list of collected single-word negation cues
                 neg_cue = 1   
                 
-            if not neg_cue:           
+            if not neg_cue: #if not, we continue checking for affixal values       
 
             # Check if the base does have the affixes; if it does, the values will be changed
                 for suffix in neg_suffix:
@@ -195,9 +195,7 @@ def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
     # Extracting additional features
     prev_tokens, next_tokens = extract_previous_and_next(tokens)
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
-    pos_categories = generate_pos_category(pos_tags)
-
-    
+    pos_categories = generate_pos_category(pos_tags)  
     
 
     neg_cues, has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_cues_set, neg_prefix, neg_suffix, vocab)
@@ -206,7 +204,7 @@ def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
     features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
                      'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'pos_tag': pos_tags, 'pos_category': pos_categories,
-                     'is_neg_cue': neg_cues, 
+                     'is_sing_cue': neg_cues, 
                      'has_affix': has_affix, 'affix': affix,
                      'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
