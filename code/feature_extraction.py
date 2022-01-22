@@ -93,12 +93,15 @@ def extract_previous_and_next(elements):
     
     return prev_tokens, next_tokens
 
+def is_neg_ex(outputfile)
+
 
 def get_affixal_and_base_features(lemmas: list, neg_prefix, neg_suffix, vocab) -> tuple:
     """
     Extract affixal and base features for each lemma, i.e. has_affix, affix, base_is_word and base.
     :return: tuple of four lists of the features.
     """
+               
     has_affix = []
     affix = []
     base_is_word = []
@@ -188,7 +191,12 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
     pos_categories = generate_pos_category(pos_tags)
 
-    # add 'is_neg_ex'
+    # Writing'is_neg_ex' file 
+    
+    with open(outputfile, 'w', encoding='utf8') as outfile:
+    for token in final_ncs:
+        outfile.write(token + '\n')  
+    
 
     has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_prefix, neg_suffix, vocab)
 
@@ -196,7 +204,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
                      'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'pos_tag': pos_tags, 'pos_category': pos_categories,
-                     # add 'is_neg_ex'
+                     'is_neg_ex': 
                      'has_affix': has_affix, 'affix': affix,
                      'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
