@@ -3,7 +3,6 @@ import string
 import sys
 import pandas as pd
 from nltk.corpus import brown, gutenberg
-from nltk.stem import PorterStemmer
 
 
 def generate_pos_category(pos_tags):
@@ -95,76 +94,74 @@ def extract_previous_and_next(elements):
     return prev_tokens, next_tokens
 
 
-def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -> tuple:
+def get_affixal_and_base_features(lemmas: list, neg_prefix, neg_suffix, vocab) -> tuple:
     """
-    Extract affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
+    Extract affixal and base features for each lemma, i.e. has_affix, affix, base_is_word and base.
     :return: tuple of four lists of the features.
     """
     has_affix = []
     affix = []
-    stem_is_word = []
-    stem = []
+    base_is_word = []
+    base = []
 
-    ps = PorterStemmer()
+    for lemma in lemmas:
 
-    for token in tokens:
-
-        if not token:  # empty line
-            has_affix_val, affix_val, stem_is_word_val, stem_val = '', '', '', ''
+        if not lemma:  # empty line
+            has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', ''
 
         # Assign values if the token doesn't have the affixes
         else:
             has_affix_val = 0
             affix_val = ""
-            stem_is_word_val = 0
-            stem_val = ""
+            base_is_word_val = 0
+            base_val = ""
 
-        # Check if the token does have the affixes; if it does, the values will be changed
+        # Check if the base does have the affixes; if it does, the values will be changed
             for suffix in neg_suffix:
                 # If the token ends with one of the suffixes
-                if token.endswith(suffix):
-                    # Get the base_stem
-                    base_stem = ps.stem(token.replace(suffix, ""))
-                    if len(base_stem) >= 3:
+                if lemma.endswith(suffix):
+                    # Get the base
+                    base_lemma = lemma.replace(suffix, "")
+                    if len(base_lemma) > 2:
                         # has_affix has value 1
                         has_affix_val = 1
                         # Feature 'affix' captures the prefix
                         affix_val = suffix
-                        # If the base_stem is also in our vocab set
-                        if base_stem in vocab:
-                            # stem_is_word has value 1
-                            stem_is_word_val = 1
-                            # Feature 'stem' captures the base
-                            stem_val = base_stem
+                        # If the base is also in our vocab set
+                        if base_lemma in vocab:
+                            # base_is_word has value 1
+                            base_is_word_val = 1
+                            # Feature 'base' captures the base
+                            base_val = base_lemma
                         break
 
-            if not has_affix_val:  # if token doesn't have a suffix
-                # Check if the token starts with one of the prefixes
+            if not has_affix_val:  # if lemma doesn't have a suffix
+                # Check if it starts with one of the prefixes
                 for prefix in neg_prefix:
-                    # If the token starts with one of the prefixes
-                    if token.startswith(prefix):
-                        # Get the base_stem
-                        base_stem = ps.stem(token.replace(prefix, "", 1))
-                        if len(base_stem) >= 3:
+                    # If the lemma starts with one of the prefixes
+                    if lemma.startswith(prefix):
+                        # Get the base
+                        base_lemma = lemma.replace(prefix, "", 1)
+                        if len(base_lemma) > 3:
                             # has_affix has value 1
                             has_affix_val = 1
                             # Feature 'affix' captures the prefix
                             affix_val = prefix
-                            # If the base_stem is also in our vocab set
-                            if base_stem in vocab:
-                                # stem_is_word has value 1
-                                stem_is_word_val = 1
-                                # Feature 'stem' captures the base
-                                stem_val = base_stem
+                            # If the base is also in our vocab set
+                            if base_lemma in vocab:
+                                # base_is_word has value 1
+                                base_is_word_val = 1
+                                # Feature 'base' captures the base
+                                base_val = base_lemma
                             break
 
         # Appending the values to the lists
         has_affix.append(has_affix_val)
         affix.append(affix_val)
-        stem_is_word.append(stem_is_word_val)
-        stem.append(stem_val)
+        base_is_word.append(base_is_word_val)
+        base.append(base_val)
 
-    return has_affix, affix, stem_is_word, stem
+    return has_affix, affix, base_is_word, base
 
 
 def write_features(input_file, neg_prefix, neg_suffix, vocab):
@@ -201,8 +198,8 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
                     "next_lemma",
                     "has_affix",
                     "affix",
-                    "stem_is_word",
-                    "stem",
+                    "base_is_word",
+                    "base",
                     "gold_label"]
 
     # Extracting features
@@ -212,7 +209,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
 
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
 
-    has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens, neg_prefix, neg_suffix, vocab)
+    has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_prefix, neg_suffix, vocab)
 
     # Defining feature values for writing to output file
     features_dict = {'book': books, 'sent_num': sent_num, 'token_num': token_num,
@@ -220,7 +217,7 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
                      'prev_token': prev_tokens, 'next_token': next_tokens,   
                      'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'has_affix': has_affix, 'affix': affix,
-                     'stem_is_word': stem_is_word, 'stem': stem,
+                     'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
 
     features_df = pd.DataFrame(features_dict, columns=feature_names)
@@ -249,17 +246,14 @@ def main() -> None:
     neg_prefix = {"dis", "im", "in", "ir", "un", "non"}
     neg_suffix = {"less", "lessness", "lessly"}
 
-    # Create corpus vocab set that unions the two biggest corpora in NLTK.
-    # Words are stemmed
-    ps = PorterStemmer()
-    print("Building vocab set. This will take a while.")
-    vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
+    # Create corpus vocab set from the Gutenberg corpus in NLTK.
+    print("Building vocab set...")
+    vocab = {word.lower() for word in gutenberg.words()}
     print("Done")
 
     for path in paths:
         print(f'Extracting features from {os.path.basename(path)}')
         write_features(path, neg_prefix, neg_suffix, vocab)
-    
 
 if __name__ == '__main__':
     main()
