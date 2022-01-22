@@ -120,34 +120,43 @@ def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -
             stem_val = ""
 
         # Check if the token does have the affixes; if it does, the values will be changed
-            for prefix in neg_prefix:
-                # If the token starts with one of the prefixes
-                if token.startswith(prefix) and token != prefix:
-                    # has_affix has value 1
-                    has_affix_val = 1
-                    # Feature 'affix' captures the prefix
-                    affix_val = prefix
-                    # If the base_stem is also in our vocab set
-                    base_stem = ps.stem(token.replace(prefix, "", 1))
-                    if base_stem in vocab:
-                        # stem_is_word has value 1
-                        stem_is_word_val = 1
-                        # Feature 'stem' captures the base
-                        stem_val = base_stem
-                    break
-
-            if not has_affix_val:  # if token doesn't have a prefix
-                # Check if the token ends with one of the suffixes
-                for suffix in neg_suffix:
-                    if token.endswith(suffix) and token != suffix:
+            for suffix in neg_suffix:
+                # If the token ends with one of the suffixes
+                if token.endswith(suffix):
+                    # Get the base_stem
+                    base_stem = ps.stem(token.replace(suffix, ""))
+                    if len(base_stem) >= 3:
+                        # has_affix has value 1
                         has_affix_val = 1
+                        # Feature 'affix' captures the prefix
                         affix_val = suffix
-                        # Check if the stem of the base appears in the vocab set
-                        base_stem = ps.stem(token.replace(suffix, "", 1))
+                        # If the base_stem is also in our vocab set
                         if base_stem in vocab:
+                            # stem_is_word has value 1
                             stem_is_word_val = 1
+                            # Feature 'stem' captures the base
                             stem_val = base_stem
                         break
+
+            if not has_affix_val:  # if token doesn't have a suffix
+                # Check if the token starts with one of the prefixes
+                for prefix in neg_prefix:
+                    # If the token starts with one of the prefixes
+                    if token.startswith(prefix):
+                        # Get the base_stem
+                        base_stem = ps.stem(token.replace(prefix, "", 1))
+                        if len(base_stem) >= 3:
+                            # has_affix has value 1
+                            has_affix_val = 1
+                            # Feature 'affix' captures the prefix
+                            affix_val = prefix
+                            # If the base_stem is also in our vocab set
+                            if base_stem in vocab:
+                                # stem_is_word has value 1
+                                stem_is_word_val = 1
+                                # Feature 'stem' captures the base
+                                stem_val = base_stem
+                            break
 
         # Appending the values to the lists
         has_affix.append(has_affix_val)
