@@ -91,17 +91,15 @@ def extract_previous_and_next(elements):
         # moving to next token in list
         position_index += 1
     
-    return prev_tokens, next_tokens
-
-def is_neg_ex(outputfile)
-
-
-def get_affixal_and_base_features(lemmas: list, neg_prefix, neg_suffix, vocab) -> tuple:
+    return prev_tokens, next_tokens  
+        
+                            
+def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg_suffix, vocab) -> tuple:
     """
     Extract affixal and base features for each lemma, i.e. has_affix, affix, base_is_word and base.
     :return: tuple of four lists of the features.
     """
-               
+    neg_cues = []           
     has_affix = []
     affix = []
     base_is_word = []
@@ -110,46 +108,32 @@ def get_affixal_and_base_features(lemmas: list, neg_prefix, neg_suffix, vocab) -
     for lemma in lemmas:
 
         if not lemma:  # empty line
-            has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', ''
-
+            neg_cue, has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', '', ''            
+         
         # Assign values if the token doesn't have the affixes
         else:
+            neg_cue = 0
             has_affix_val = 0
             affix_val = ""
             base_is_word_val = 0
             base_val = ""
+            
+            if lemma in single_neg_cues:
+                neg_cue = 1   
+                
+            if not neg_cue:           
 
-        # Check if the base does have the affixes; if it does, the values will be changed
-            for suffix in neg_suffix:
-                # If the token ends with one of the suffixes
-                if lemma.endswith(suffix):
-                    # Get the base
-                    base_lemma = lemma.replace(suffix, "")
-                    if len(base_lemma) > 2:
-                        # has_affix has value 1
-                        has_affix_val = 1
-                        # Feature 'affix' captures the prefix
-                        affix_val = suffix
-                        # If the base is also in our vocab set
-                        if base_lemma in vocab:
-                            # base_is_word has value 1
-                            base_is_word_val = 1
-                            # Feature 'base' captures the base
-                            base_val = base_lemma
-                        break
-
-            if not has_affix_val:  # if lemma doesn't have a suffix
-                # Check if it starts with one of the prefixes
-                for prefix in neg_prefix:
-                    # If the lemma starts with one of the prefixes
-                    if lemma.startswith(prefix):
+            # Check if the base does have the affixes; if it does, the values will be changed
+                for suffix in neg_suffix:
+                    # If the token ends with one of the suffixes
+                    if lemma.endswith(suffix):
                         # Get the base
-                        base_lemma = lemma.replace(prefix, "", 1)
-                        if len(base_lemma) > 3:
+                        base_lemma = lemma.replace(suffix, "")
+                        if len(base_lemma) > 2:
                             # has_affix has value 1
                             has_affix_val = 1
                             # Feature 'affix' captures the prefix
-                            affix_val = prefix
+                            affix_val = suffix
                             # If the base is also in our vocab set
                             if base_lemma in vocab:
                                 # base_is_word has value 1
@@ -158,16 +142,38 @@ def get_affixal_and_base_features(lemmas: list, neg_prefix, neg_suffix, vocab) -
                                 base_val = base_lemma
                             break
 
+                if not has_affix_val:  # if lemma doesn't have a suffix
+                    # Check if it starts with one of the prefixes
+                    for prefix in neg_prefix:
+                        # If the lemma starts with one of the prefixes
+                        if lemma.startswith(prefix):
+                            # Get the base
+                            base_lemma = lemma.replace(prefix, "", 1)
+                            if len(base_lemma) > 3:
+                                # has_affix has value 1
+                                has_affix_val = 1
+                                # Feature 'affix' captures the prefix
+                                affix_val = prefix
+                                # If the base is also in our vocab set
+                                if base_lemma in vocab:
+                                    # base_is_word has value 1
+                                    base_is_word_val = 1
+                                    # Feature 'base' captures the base
+                                    base_val = base_lemma
+                                break
+
         # Appending the values to the lists
+        neg_cues.append(neg_cue)
         has_affix.append(has_affix_val)
         affix.append(affix_val)
         base_is_word.append(base_is_word_val)
         base.append(base_val)
+        
 
-    return has_affix, affix, base_is_word, base
+    return neg_cues, has_affix, affix, base_is_word, base
 
 
-def write_features(input_file, neg_prefix, neg_suffix, vocab):
+def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
     """
     Generate a new file containing extracted features.
     :param input_file: the path to preprocessed file
@@ -191,20 +197,16 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
     pos_categories = generate_pos_category(pos_tags)
 
-    # Writing'is_neg_ex' file 
     
-    with open(outputfile, 'w', encoding='utf8') as outfile:
-    for token in final_ncs:
-        outfile.write(token + '\n')  
     
 
-    has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_prefix, neg_suffix, vocab)
+    neg_cues, has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_cues_set, neg_prefix, neg_suffix, vocab)
 
     # Defining feature values for writing to output file
     features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
                      'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'pos_tag': pos_tags, 'pos_category': pos_categories,
-                     'is_neg_ex': 
+                     'is_neg_cue': neg_cues, 
                      'has_affix': has_affix, 'affix': affix,
                      'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
@@ -227,6 +229,13 @@ def main() -> None:
     if not paths:
         paths = ['../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_preprocessed.txt',
                  '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
+        
+    inputfile = './single_neg_cues.txt'
+    neg_cues_set = set()
+        
+    with open(inputfile, 'r', encoding='utf8') as infile:
+        for line in infile:
+            neg_cues_set.add(line.strip())    
 
     # Create negation prefix set and suffix set
     # Negation affixes are acquired from the training and dev data sets
@@ -241,7 +250,7 @@ def main() -> None:
 
     for path in paths:
         print(f'Extracting features from {os.path.basename(path)}')
-        write_features(path, neg_prefix, neg_suffix, vocab)
+        write_features(path, neg_cues_set, neg_prefix, neg_suffix, vocab)
 
 if __name__ == '__main__':
     main()
