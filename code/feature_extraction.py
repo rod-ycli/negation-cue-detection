@@ -3,7 +3,6 @@ import string
 import sys
 import pandas as pd
 from nltk.corpus import brown, gutenberg
-from nltk.stem import PorterStemmer
 
 
 def generate_pos_category(pos_tags):
@@ -92,73 +91,89 @@ def extract_previous_and_next(elements):
         # moving to next token in list
         position_index += 1
     
-    return prev_tokens, next_tokens
-
-
-def get_affixal_and_base_features(tokens: list, neg_prefix, neg_suffix, vocab) -> tuple:
+    return prev_tokens, next_tokens  
+        
+                            
+def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg_suffix, vocab) -> tuple:
     """
-    Extract affixal and base features for each token, i.e. has_affix, affix, stem_is_word and stem.
+    Extract affixal and base features for each lemma, i.e. has_affix, affix, base_is_word and base.
     :return: tuple of four lists of the features.
     """
+    neg_cues = []           
     has_affix = []
     affix = []
-    stem_is_word = []
-    stem = []
+    base_is_word = []
+    base = []
 
-    ps = PorterStemmer()
+    for lemma in lemmas:
 
-    for token in tokens:
-
-        if not token:  # empty line
-            has_affix_val, affix_val, stem_is_word_val, stem_val = '', '', '', ''
-
+        if not lemma:  # empty line
+            neg_cue, has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', '', ''            
+         
         # Assign values if the token doesn't have the affixes
         else:
+            neg_cue = 0
             has_affix_val = 0
             affix_val = ""
-            stem_is_word_val = 0
-            stem_val = ""
+            base_is_word_val = 0
+            base_val = ""
+            
+            if lemma in single_neg_cues: #checking if lemma is found in list of collected single-word negation cues
+                neg_cue = 1   
+                
+            if not neg_cue: #if not, we continue checking for affixal values       
 
-        # Check if the token does have the affixes; if it does, the values will be changed
-            for prefix in neg_prefix:
-                # If the token starts with one of the prefixes
-                if token.startswith(prefix) and token != prefix:
-                    # has_affix has value 1
-                    has_affix_val = 1
-                    # Feature 'affix' captures the prefix
-                    affix_val = prefix
-                    # If the base_stem is also in our vocab set
-                    base_stem = ps.stem(token.replace(prefix, "", 1))
-                    if base_stem in vocab:
-                        # stem_is_word has value 1
-                        stem_is_word_val = 1
-                        # Feature 'stem' captures the base
-                        stem_val = base_stem
-                    break
-
-            if not has_affix_val:  # if token doesn't have a prefix
-                # Check if the token ends with one of the suffixes
+            # Check if the base does have the affixes; if it does, the values will be changed
                 for suffix in neg_suffix:
-                    if token.endswith(suffix) and token != suffix:
-                        has_affix_val = 1
-                        affix_val = suffix
-                        # Check if the stem of the base appears in the vocab set
-                        base_stem = ps.stem(token.replace(suffix, "", 1))
-                        if base_stem in vocab:
-                            stem_is_word_val = 1
-                            stem_val = base_stem
-                        break
+                    # If the token ends with one of the suffixes
+                    if lemma.endswith(suffix):
+                        # Get the base
+                        base_lemma = lemma.replace(suffix, "")
+                        if len(base_lemma) > 2:
+                            # has_affix has value 1
+                            has_affix_val = 1
+                            # Feature 'affix' captures the prefix
+                            affix_val = suffix
+                            # If the base is also in our vocab set
+                            if base_lemma in vocab:
+                                # base_is_word has value 1
+                                base_is_word_val = 1
+                                # Feature 'base' captures the base
+                                base_val = base_lemma
+                            break
+
+                if not has_affix_val:  # if lemma doesn't have a suffix
+                    # Check if it starts with one of the prefixes
+                    for prefix in neg_prefix:
+                        # If the lemma starts with one of the prefixes
+                        if lemma.startswith(prefix):
+                            # Get the base
+                            base_lemma = lemma.replace(prefix, "", 1)
+                            if len(base_lemma) > 3:
+                                # has_affix has value 1
+                                has_affix_val = 1
+                                # Feature 'affix' captures the prefix
+                                affix_val = prefix
+                                # If the base is also in our vocab set
+                                if base_lemma in vocab:
+                                    # base_is_word has value 1
+                                    base_is_word_val = 1
+                                    # Feature 'base' captures the base
+                                    base_val = base_lemma
+                                break
 
         # Appending the values to the lists
+        neg_cues.append(neg_cue)
         has_affix.append(has_affix_val)
         affix.append(affix_val)
-        stem_is_word.append(stem_is_word_val)
-        stem.append(stem_val)
+        base_is_word.append(base_is_word_val)
+        base.append(base_val)
+        
 
-    return has_affix, affix, stem_is_word, stem
+    return neg_cues, has_affix, affix, base_is_word, base
 
 
-def write_features(input_file, neg_prefix, neg_suffix, vocab):
+def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
     """
     Generate a new file containing extracted features.
     :param input_file: the path to preprocessed file
@@ -176,21 +191,22 @@ def write_features(input_file, neg_prefix, neg_suffix, vocab):
     pos_tags = input_data[5]
     labels = input_data[6]
 
+
     # Extracting additional features
     prev_tokens, next_tokens = extract_previous_and_next(tokens)
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
-    pos_categories = generate_pos_category(pos_tags)
+    pos_categories = generate_pos_category(pos_tags)  
+    
 
-    # add 'is_neg_ex'
-
-    has_affix, affix, stem_is_word, stem = get_affixal_and_base_features(tokens, neg_prefix, neg_suffix, vocab)
+    neg_cues, has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_cues_set, neg_prefix, neg_suffix, vocab)
 
     # Defining feature values for writing to output file
     features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
                      'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
                      'pos_tag': pos_tags, 'pos_category': pos_categories,
-                     # add 'is_neg_ex'
-                     'has_affix': has_affix, 'affix': affix, 'stem_is_word': stem_is_word, 'stem': stem,
+                     'is_sing_cue': neg_cues, 
+                     'has_affix': has_affix, 'affix': affix,
+                     'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
 
     # Defining header names
@@ -211,6 +227,13 @@ def main() -> None:
     if not paths:
         paths = ['../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_preprocessed.txt',
                  '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
+        
+    inputfile = './single_neg_cues.txt'
+    neg_cues_set = set()
+        
+    with open(inputfile, 'r', encoding='utf8') as infile:
+        for line in infile:
+            neg_cues_set.add(line.strip())    
 
     # Create negation prefix set and suffix set
     # Negation affixes are acquired from the training and dev data sets
@@ -218,17 +241,14 @@ def main() -> None:
     neg_prefix = {"dis", "im", "in", "ir", "un", "non"}
     neg_suffix = {"less", "lessness", "lessly"}
 
-    # Create corpus vocab set that unions the two biggest corpora in NLTK.
-    # Words are stemmed
-    ps = PorterStemmer()
-    print("Building vocab set. This will take a while.")
-    vocab = {ps.stem(word.lower()) for word in gutenberg.words()} | {ps.stem(word.lower()) for word in brown.words()}
+    # Create corpus vocab set from the Gutenberg corpus in NLTK.
+    print("Building vocab set...")
+    vocab = {word.lower() for word in gutenberg.words()}
     print("Done")
 
     for path in paths:
         print(f'Extracting features from {os.path.basename(path)}')
-        write_features(path, neg_prefix, neg_suffix, vocab)
-    
+        write_features(path, neg_cues_set, neg_prefix, neg_suffix, vocab)
 
 if __name__ == '__main__':
     main()
