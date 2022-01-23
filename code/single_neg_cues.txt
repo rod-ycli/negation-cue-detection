@@ -27,6 +27,6 @@ nowhere
 prevent
 refuse
 resolve
-rule
 save
+unable
 without
