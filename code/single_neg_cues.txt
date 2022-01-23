@@ -30,4 +30,3 @@ rule
 deny
 decline
 resolve
-
