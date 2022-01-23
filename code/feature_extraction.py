@@ -2,10 +2,11 @@ import os
 import string
 import sys
 import pandas as pd
-from nltk.corpus import brown, gutenberg
+from nltk.corpus import gutenberg
+from typing import List, Tuple
 
 
-def generate_pos_category(pos_tags):
+def generate_pos_category(pos_tags: List[str]) -> List[str]:
     """
     Assign part-of-speech tags to seven categories as follows: ADJ, NN, ADV, VB, PRO, PUNCT and OTH.
     :param pos_tags: list with pos_tags
@@ -39,7 +40,7 @@ def generate_pos_category(pos_tags):
     return pos_list
 
 
-def extract_previous_and_next(elements):
+def extract_previous_and_next(elements: List[str]) -> Tuple[List[str], List[str]]:
     """
     Extract previous and preceding token or lemma from a list of tokens or lemmas
     :param elements: list with tokens or lemmas
@@ -91,14 +92,12 @@ def extract_previous_and_next(elements):
         # moving to next token in list
         position_index += 1
     
-    return prev_tokens, next_tokens  
+    return prev_tokens, next_tokens
         
                             
-def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg_suffix, vocab) -> tuple:
-    """
-    Extract affixal and base features for each lemma, i.e. has_affix, affix, base_is_word and base.
-    :return: tuple of four lists of the features.
-    """
+def get_negation_features(lemmas: list, single_neg_cues: set, neg_prefix: set, neg_suffix: set, vocab: set) \
+        -> Tuple[List[str], List[str], List[str], List[str], List[str]]:
+    """Extract negation features for each lemma, i.e. is_neg_cue, has_affix, affix, base_is_word and base."""
     neg_cues = []           
     has_affix = []
     affix = []
@@ -108,22 +107,22 @@ def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg
     for lemma in lemmas:
 
         if not lemma:  # empty line
-            neg_cue, has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', '', ''            
+            is_neg_cue, has_affix_val, affix_val, base_is_word_val, base_val = '', '', '', '', ''
          
-        # Assign values if the token doesn't have the affixes
+        # Assign values for the case that the token doesn't have the affixes
         else:
-            neg_cue = 0
+            is_neg_cue = 0
             has_affix_val = 0
             affix_val = ""
             base_is_word_val = 0
             base_val = ""
             
-            if lemma in single_neg_cues: #checking if lemma is found in list of collected single-word negation cues
-                neg_cue = 1   
+            if lemma in single_neg_cues:  # checking if lemma is found in list of collected single-word negation cues
+                is_neg_cue = 1
                 
-            if not neg_cue: #if not, we continue checking for affixal values       
+            if not is_neg_cue:  # if not, we continue checking for affixal values
 
-            # Check if the base does have the affixes; if it does, the values will be changed
+                # Check if the base does have the affixes
                 for suffix in neg_suffix:
                     # If the token ends with one of the suffixes
                     if lemma.endswith(suffix):
@@ -163,21 +162,17 @@ def get_affixal_and_base_features(lemmas: list, single_neg_cues, neg_prefix, neg
                                 break
 
         # Appending the values to the lists
-        neg_cues.append(neg_cue)
+        neg_cues.append(is_neg_cue)
         has_affix.append(has_affix_val)
         affix.append(affix_val)
         base_is_word.append(base_is_word_val)
         base.append(base_val)
-        
 
     return neg_cues, has_affix, affix, base_is_word, base
 
 
-def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
-    """
-    Generate a new file containing extracted features.
-    :param input_file: the path to preprocessed file
-    """
+def write_features(input_file: str, neg_cues_set: set, neg_prefix: set, neg_suffix: set, vocab: set) -> None:
+    """Generate a new file containing extracted features."""
     # Prepare output file
     output_file = input_file.replace('_preprocessed.txt', '_features.txt')
 
@@ -191,20 +186,21 @@ def write_features(input_file, neg_cues_set, neg_prefix, neg_suffix, vocab):
     pos_tags = input_data[5]
     labels = input_data[6]
 
-
     # Extracting additional features
-    prev_tokens, next_tokens = extract_previous_and_next(tokens)
+    # prev_tokens, next_tokens = extract_previous_and_next(tokens)
     prev_lemmas, next_lemmas = extract_previous_and_next(lemmas)
     pos_categories = generate_pos_category(pos_tags)  
-    
 
-    neg_cues, has_affix, affix, base_is_word, base = get_affixal_and_base_features(lemmas, neg_cues_set, neg_prefix, neg_suffix, vocab)
+    neg_cues, has_affix, affix, base_is_word, base = get_negation_features(lemmas, neg_cues_set, neg_prefix, neg_suffix,
+                                                                           vocab)
 
     # Defining feature values for writing to output file
-    features_dict = {'token': tokens, 'prev_token': prev_tokens, 'next_token': next_tokens,
+    features_dict = {'book': input_data[0], 'sent_num': input_data[1], 'token_num': input_data[2],
+                     'token': tokens,  # 'prev_token': prev_tokens, 'next_token': next_tokens,
                      'lemma': lemmas, 'prev_lemma': prev_lemmas, 'next_lemma': next_lemmas,
-                     'pos_tag': pos_tags, 'pos_category': pos_categories,
-                     'is_sing_cue': neg_cues, 
+                     # 'pos_tag': pos_tags,
+                     'pos_category': pos_categories,
+                     'is_single_cue': neg_cues,
                      'has_affix': has_affix, 'affix': affix,
                      'base_is_word': base_is_word, 'base': base,
                      'gold_label': labels}
@@ -228,10 +224,10 @@ def main() -> None:
         paths = ['../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_preprocessed.txt',
                  '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
         
-    inputfile = './single_neg_cues.txt'
+    single_neg_cues_file = './single_neg_cues.txt'
     neg_cues_set = set()
         
-    with open(inputfile, 'r', encoding='utf8') as infile:
+    with open(single_neg_cues_file, 'r', encoding='utf8') as infile:
         for line in infile:
             neg_cues_set.add(line.strip())    
 
@@ -241,7 +237,7 @@ def main() -> None:
     neg_prefix = {"dis", "im", "in", "ir", "un", "non"}
     neg_suffix = {"less", "lessness", "lessly"}
 
-    # Create corpus vocab set from the Gutenberg corpus in NLTK.
+    # Create corpus vocab set from the Gutenberg corpus in NLTK
     print("Building vocab set...")
     vocab = {word.lower() for word in gutenberg.words()}
     print("Done")
@@ -249,6 +245,7 @@ def main() -> None:
     for path in paths:
         print(f'Extracting features from {os.path.basename(path)}')
         write_features(path, neg_cues_set, neg_prefix, neg_suffix, vocab)
+
 
 if __name__ == '__main__':
     main()
