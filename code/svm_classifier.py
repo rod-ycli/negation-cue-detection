@@ -76,18 +76,28 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
     print(tabulate(df_report, headers='keys', tablefmt='psql'))
 
 
-def run_classifier(train_path, test_path, selected_features):
+def run_classifier_and_write_file(train_path, test_path, selected_features, name=''):
 
     feature_values, labels = extract_features_and_labels(train_path, selected_features)
     
     classifier, vectorizer = create_classifier(feature_values, labels)
     predictions, gold_labels = get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features)
+
+    test_data = pd.read_csv(test_path, encoding='utf-8', sep='\t', keep_default_na=False,
+                             quotechar='\\', skip_blank_lines=False)
+    pred_keys = ['book', 'sent_num', 'token_num'] + selected_features + ['gold_label']
+    pred_dict = dict()
+    for key in pred_keys:
+        pred_dict[key] = test_data[key]
+    pred_dict.update({'pred': predictions})
+    columns = pred_dict.keys()
+    pred_df = pd.DataFrame(pred_dict, columns=columns)
+    pred_df.to_csv(test_path.replace('_features.txt', f'_pred{name}.txt'), sep='\t', index=False)
+
     print()
     print('----> ' + 'SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
     print_confusion_matrix(predictions, gold_labels)
     print_precision_recall_f1_score(predictions, gold_labels)
-
-    return predictions
 
 
 def main() -> None:
@@ -105,13 +115,13 @@ def main() -> None:
                           'affix', 'base_is_word', 'base']
     # baseline
     selected_features = ['token']
-    run_classifier(train_path, test_path, selected_features)
+    run_classifier_and_write_file(train_path, test_path, selected_features, name='_baseline')
 
     # use all features
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
 
-    run_classifier(train_path, test_path, selected_features)
+    run_classifier_and_write_file(train_path, test_path, selected_features)
 
 
 if __name__ == '__main__':
