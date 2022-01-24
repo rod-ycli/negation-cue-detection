@@ -12,8 +12,8 @@ from tabulate import tabulate
 
 def extract_features_and_labels(file_path, selected_features):
 
-    data = []
-    targets = []
+    features = []
+    labels = []
 
     with open(file_path, 'r', encoding='utf8') as infile:
         # restval specifies value to be used for missing values
@@ -23,27 +23,27 @@ def extract_features_and_labels(file_path, selected_features):
             for feature_name in selected_features:
                 if row[feature_name]:  # if there is a value for this feature
                     feature_dict[feature_name] = row[feature_name]
-            data.append(feature_dict)
-            targets.append(row['gold_label'])
+            features.append(feature_dict)
+            labels.append(row['gold_label'])
 
-    return data, targets
+    return features, labels
 
 
-def create_classifier(train_features, train_targets):
+def create_classifier(train_features, train_labels):
 
     classifier = LinearSVC()
     vec = DictVectorizer()
-    tokens_vectorized = vec.fit_transform(train_features)
-    classifier.fit(tokens_vectorized, train_targets)
+    train_features_vectorized = vec.fit_transform(train_features)
+    classifier.fit(train_features_vectorized, train_labels)
         
     return classifier, vec
 
 
-def select_classifier_using_cross_validation(train_features, train_targets):
+def select_classifier_using_cross_validation(train_features, train_labels):
 
     classifier = LinearSVC()
     vec = DictVectorizer()
-    tokens_vectorized = vec.fit_transform(train_features)
+    train_features_vectorized = vec.fit_transform(train_features)
 
     # define parameters we want to try out
     # for possibilities, see
@@ -57,10 +57,10 @@ def select_classifier_using_cross_validation(train_features, train_targets):
 
     print("Running cross validation, this will take a while and you might get some Convergence Warnings.")
 
-    grid.fit(tokens_vectorized, train_targets)
+    grid.fit(train_features_vectorized, train_labels)
 
     print(f'Done! Best parameters: {grid.best_params_}, f1_macro: '
-          f'{round(grid.score(tokens_vectorized, train_targets), 3)}')
+          f'{round(grid.score(train_features_vectorized, train_labels), 3)}')
 
     classifier = grid.best_estimator_
 
@@ -70,11 +70,11 @@ def select_classifier_using_cross_validation(train_features, train_targets):
 def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features):
 
     # we use the same function as above (guarantees features have the same name and form)
-    features, gold_labels = extract_features_and_labels(test_path, selected_features)
+    test_features, gold_labels = extract_features_and_labels(test_path, selected_features)
     
     # we need to use the same fitting as before, so now we only transform the current features according to this
     # mapping (using only transform)
-    test_features_vectorized = vectorizer.transform(features)
+    test_features_vectorized = vectorizer.transform(test_features)
     predictions = classifier.predict(test_features_vectorized)
 
     return predictions, gold_labels
@@ -97,7 +97,7 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
     # remove unwanted metrics
     report.pop('accuracy')
     report.pop('weighted avg')
-    # transform dictionary into a dataframe and round the values
+    # transform dictionary into a dataframe and round the results
     df_report = pd.DataFrame(report).transpose()
     df_report = df_report.round(digits)
     df_report['support'] = df_report['support'].astype(int)
@@ -107,22 +107,19 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
 
 def run_classifier(train_path, test_path, selected_features, cross_validation=False):
 
-    feature_values, labels = extract_features_and_labels(train_path, selected_features)
+    train_features, train_labels = extract_features_and_labels(train_path, selected_features)
     
     if cross_validation:
-        classifier, vectorizer = select_classifier_using_cross_validation(feature_values, labels)
+        classifier, vectorizer = select_classifier_using_cross_validation(train_features, train_labels)
         print('Result using the best parameters:')
 
     else:
-        classifier, vectorizer = create_classifier(feature_values, labels)
+        classifier, vectorizer = create_classifier(train_features, train_labels)
 
     predictions, gold_labels = get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features)
-    print()
     print('----> ' + 'SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
     print_confusion_matrix(predictions, gold_labels)
     print_precision_recall_f1_score(predictions, gold_labels)
-
-    return predictions
 
 
 def main() -> None:
