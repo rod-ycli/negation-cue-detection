@@ -1,4 +1,5 @@
-from sklearn import svm
+from sklearn.svm import LinearSVC
+from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction import DictVectorizer
 import pandas as pd
 from sklearn.metrics import classification_report, confusion_matrix
@@ -30,11 +31,39 @@ def extract_features_and_labels(file_path, selected_features):
 
 def create_classifier(train_features, train_targets):
 
-    classifier = svm.LinearSVC()
+    classifier = LinearSVC()
     vec = DictVectorizer()
     tokens_vectorized = vec.fit_transform(train_features)
     classifier.fit(tokens_vectorized, train_targets)
         
+    return classifier, vec
+
+
+def select_classifier_using_cross_validation(train_features, train_targets):
+
+    classifier = LinearSVC()
+    vec = DictVectorizer()
+    tokens_vectorized = vec.fit_transform(train_features)
+
+    # define parameters we want to try out
+    # for possibilities, see
+    # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
+    parameters = {'loss': ['hinge', 'squared_hinge'],
+                  'C': [0.8, 0.9, 1],
+                  'tol': [1e-5, 1e-4],
+                  'max_iter': [1000, 2000]}
+
+    grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
+
+    print("Running cross validation, this will take a while.")
+
+    grid.fit(tokens_vectorized, train_targets)
+
+    print(f'Done! Best parameters: {grid.best_params_}, f1_macro: '
+          f'{round(grid.score(tokens_vectorized, train_targets), 3)}')
+
+    classifier = grid.best_estimator_
+
     return classifier, vec
 
 
@@ -76,11 +105,17 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
     print(tabulate(df_report, headers='keys', tablefmt='psql'))
 
 
-def run_classifier(train_path, test_path, selected_features):
+def run_classifier(train_path, test_path, selected_features, cross_validation=False):
 
     feature_values, labels = extract_features_and_labels(train_path, selected_features)
     
-    classifier, vectorizer = create_classifier(feature_values, labels)
+    if cross_validation:
+        classifier, vectorizer = select_classifier_using_cross_validation(feature_values, labels)
+        print('Result using the best parameters:')
+
+    else:
+        classifier, vectorizer = create_classifier(feature_values, labels)
+
     predictions, gold_labels = get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features)
     print()
     print('----> ' + 'SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
@@ -106,6 +141,9 @@ def main() -> None:
     # baseline
     selected_features = ['token']
     run_classifier(train_path, test_path, selected_features)
+
+    # implement basic cross-validation in combination with the baseline system
+    run_classifier(train_path, test_path, selected_features, cross_validation=True)
 
     # use all features
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
