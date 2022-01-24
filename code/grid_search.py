@@ -49,7 +49,9 @@ def create_classifier(train_features,
 
     # Search over the following values of hyperparameters:
     pipe_cvec_svc_params = {
-        'dictvec__max_features': [500], #200,500
+
+        'dictvec__max_features': [500], 
+
         'dictvec__min_df': [2,3], 
         'dictvec__max_df': [.9,.95],    
         'svc__kernel': ['linear'],
@@ -69,9 +71,12 @@ def create_classifier(train_features,
 
     # Print best parameters
     print('Best parameters: ', gs_cvec_svc.best_params_)
-    print('Best CV score: ', gs_cvec_lr.best_score_)
-    print('Training score:', gs_cvec_lr.score(train_features, train_targets))
-    print('Validation score:', gs_cvec_lr.score(test__features, test__targets))
+
+    print('Best CV score: ', gs_cvec_svc.best_score_)
+    print('Training score:', gs_cvec_svc.score(train_features, train_targets))
+    print('Validation score:', gs_cvec_svc.score(test__features, test__targets))
+
+
     print('')
     
     return cvec_svc_pred
@@ -98,6 +103,7 @@ testfile = '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_features.txt'
 
 train_features, train_targets = extract_features_and_labels(trainfile,selected_features )
 test__features, test__targets = extract_features_and_labels(testfile,selected_features )
+
 prediction = create_classifier(train_features, 
                                   train_targets, 
                                   test__features, 
