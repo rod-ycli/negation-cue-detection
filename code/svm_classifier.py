@@ -105,10 +105,10 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
     print(tabulate(df_report, headers='keys', tablefmt='psql'))
 
 
-def run_classifier_and_write_file(train_path, test_path, selected_features, cross_validation=False, name=''):
+def run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=False):
 
     train_features, train_labels = extract_features_and_labels(train_path, selected_features)
-    
+
     if cross_validation:
         classifier, vectorizer = select_classifier_using_cross_validation(train_features, train_labels)
         print('Result using the best parameters:')
@@ -118,21 +118,25 @@ def run_classifier_and_write_file(train_path, test_path, selected_features, cros
 
     predictions, gold_labels = get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features)
 
-    test_data = pd.read_csv(test_path, encoding='utf-8', sep='\t', keep_default_na=False,
-                             quotechar='\\', skip_blank_lines=False)
-    pred_keys = ['book', 'sent_num', 'token_num'] + selected_features + ['gold_label']
-    pred_dict = dict()
-    for key in pred_keys:
-        pred_dict[key] = test_data[key]
-    pred_dict.update({'pred': predictions})
-    columns = pred_dict.keys()
-    pred_df = pd.DataFrame(pred_dict, columns=columns)
-    pred_df.to_csv(test_path.replace('_features.txt', f'_pred{name}.txt'), sep='\t', index=False)
-
-    print()
     print('----> ' + 'SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
     print_confusion_matrix(predictions, gold_labels)
     print_precision_recall_f1_score(predictions, gold_labels)
+
+    return predictions
+
+
+def write_predictions_to_file(file_path, selected_features, predictions, name):
+
+    df = pd.read_csv(file_path, encoding='utf-8', sep='\t', keep_default_na=False,
+                     quotechar='\\', skip_blank_lines=False)
+    pred_keys = ['book', 'sent_num', 'token_num'] + selected_features + ['gold_label']
+    pred_dict = dict()
+    for key in pred_keys:
+        pred_dict[key] = df[key]
+    pred_dict.update({'pred': predictions})
+    columns = pred_dict.keys()
+    pred_df = pd.DataFrame(pred_dict, columns=columns)
+    pred_df.to_csv(file_path.replace('_features.txt', f'_pred_{name}.txt'), sep='\t', index=False)
 
 
 def main() -> None:
@@ -146,18 +150,27 @@ def main() -> None:
     train_path = paths[0]
     test_path = paths[1]
 
-    available_features = ['token', 'lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix',
-                          'affix', 'base_is_word', 'base']
+    # available_features = ['token', 'lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix',
+    #                       'affix', 'base_is_word', 'base']
 
-    # implement basic cross-validation in combination with the baseline system
-    run_classifier(train_path, test_path, selected_features, cross_validation=True, name='_baseline')
+    # baseline
+    selected_features = ['token']
 
-    # use all features
+    predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
+    write_predictions_to_file(test_path, selected_features, predictions, "baseline_SVM")
+
+    # # implement basic cross-validation in combination with the baseline system
+    # run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=True)
+
+    # use the full set of features
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
 
-    # implement basic cross-validation in combination with the system using all features
-    run_classifier(train_path, test_path, selected_features, cross_validation=True)
+    predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
+    write_predictions_to_file(test_path, selected_features, predictions, "full_SVM")
+
+    # # implement basic cross-validation in combination with the system using all features
+    # run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=True)
 
 
 if __name__ == '__main__':
