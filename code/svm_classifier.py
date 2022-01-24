@@ -55,7 +55,7 @@ def select_classifier_using_cross_validation(train_features, train_targets):
 
     grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
 
-    print("Running cross validation, this will take a while.")
+    print("Running cross validation, this will take a while and you might get some Convergence Warnings.")
 
     grid.fit(tokens_vectorized, train_targets)
 
@@ -148,8 +148,10 @@ def main() -> None:
     # use all features
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
-
     run_classifier(train_path, test_path, selected_features)
+
+    # implement basic cross-validation in combination with the system using all features
+    run_classifier(train_path, test_path, selected_features, cross_validation=True)
 
 
 if __name__ == '__main__':
