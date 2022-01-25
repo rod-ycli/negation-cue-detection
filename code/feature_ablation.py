@@ -1,4 +1,5 @@
-from SVM import *
+import sys
+from SVM import run_classifier_and_return_predictions_and_gold, evaluate_classifier
 
 
 def main() -> None:
