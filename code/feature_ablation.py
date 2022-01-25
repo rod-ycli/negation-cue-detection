@@ -32,11 +32,11 @@ def main() -> None:
             combinations.append([f for f in available_features if (f != target)])
 
         # Add selected combinations
-        combinations.append(['lemma'])
-        combinations.append(['lemma', 'prev_lemma', 'next_lemma'])  # MWCs
-        combinations.append(['lemma', 'has_affix', 'affix', 'base_is_word', 'base'])  # affixal
-        combinations.append(['lemma', 'has_affix', 'affix'])  # base
-        combinations.append(['lemma', 'base_is_word', 'base'])
+        combinations.append(['lemma', 'pos_category'])
+        combinations.append(['lemma', 'pos_category', 'prev_lemma', 'next_lemma'])  # MWCs
+        combinations.append(['lemma', 'pos_category', 'is_single_cue'])  # single cues
+        combinations.append(['lemma', 'pos_category', 'has_affix'])  # affixal
+        combinations.append(['lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])  # false-affixal: improve precision?
     else:
         combinations.append(feature_combination)
 
