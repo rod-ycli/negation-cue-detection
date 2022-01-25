@@ -56,7 +56,7 @@ def create_classifier_using_cross_validation(train_features, train_labels):
 
     grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
 
-    print("Running cross validation, this will take a while and you might get some Convergence Warnings.")
+    print("Running cross validation, this will take a while and you might get some Convergence Warnings")
 
     grid.fit(train_features_vectorized, train_labels)
 
@@ -73,6 +73,7 @@ def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_fe
     # we need to use the same fitting as before, so now we only transform the current features according to this
     # mapping (using only transform)
     test_features_vectorized = vectorizer.transform(test_features)
+    print(f'Using vectors of dimensionality {test_features_vectorized.shape[1]}')
     predictions = classifier.predict(test_features_vectorized)
 
     return predictions, gold_labels
@@ -105,7 +106,7 @@ def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
 
 def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM'):
 
-    print(f'----> Evaluating {name}' + ' with ' + ' , '.join(selected_features) + ' as features <----')
+    print(f"Evaluating {name} with {', '.join(selected_features)} as features:")
 
     cf_matrix = generate_confusion_matrix(predictions, gold_labels)
     report = calculate_precision_recall_f1_score(predictions, gold_labels)
@@ -150,6 +151,10 @@ def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cr
 
     predictions, gold_labels = run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features,
                                                                               cross_validation)
+    if cross_validation:
+        print(f"Running {name.replace('_', ' ')} with best parameters")
+    else:
+        print(f"Running {name.replace('_', ' ')}")
     write_predictions_to_file(test_path, selected_features, predictions, name)
     evaluate_classifier(predictions, gold_labels, selected_features)
 
