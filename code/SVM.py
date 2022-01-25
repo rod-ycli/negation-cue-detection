@@ -32,6 +32,9 @@ def extract_features_and_labels(file_path, selected_features):
 def create_classifier(train_features, train_labels):
 
     classifier = LinearSVC()
+    # classifier = LinearSVC(penalty='l2', loss='squared_hinge', *, dual=True, tol=0.0001, C=1.0, multi_class='ovr',
+    #                        fit_intercept=True,
+    #                        intercept_scaling=1, class_weight=None, verbose=0, random_state=None, max_iter=1000)
     vec = DictVectorizer()
     train_features_vectorized = vec.fit_transform(train_features)
     classifier.fit(train_features_vectorized, train_labels)
@@ -49,7 +52,7 @@ def select_classifier_using_cross_validation(train_features, train_labels):
     # for possibilities, see
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
     parameters = {'loss': ['hinge', 'squared_hinge'],
-                  'C': [0.8, 0.9, 1],
+                  'C': [0.6, 0.7, 0.8],
                   'tol': [1e-5, 1e-4],
                   'max_iter': [1000, 2000]}
 
@@ -87,7 +90,9 @@ def print_confusion_matrix(predictions, gold_labels):
     # transform confusion matrix into a dataframe
     df_cf_matrix = pd.DataFrame(cf_matrix, index=labels, columns=labels)
 
-    print(tabulate(df_cf_matrix, headers='keys', tablefmt='psql'))
+    # print(tabulate(df_cf_matrix, headers='keys', tablefmt='psql'))
+    print(df_cf_matrix.to_latex())
+    return df_cf_matrix
 
 
 def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
@@ -122,7 +127,7 @@ def run_classifier_and_return_predictions(train_path, test_path, selected_featur
     print_confusion_matrix(predictions, gold_labels)
     print_precision_recall_f1_score(predictions, gold_labels)
 
-    return predictions
+    return predictions, gold_labels
 
 
 def write_predictions_to_file(file_path, selected_features, predictions, name):
@@ -153,11 +158,21 @@ def main() -> None:
     # available_features = ['token', 'lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix',
     #                       'affix', 'base_is_word', 'base']
 
-    # baseline
-    selected_features = ['token']
+    final_list = []
+    final_list.append(['lemma'])
+    final_list.append(['lemma', 'prev_lemma', 'next_lemma'])
 
-    predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
-    write_predictions_to_file(test_path, selected_features, predictions, "baseline_SVM")
+
+
+    for l in final_list:
+
+
+    # baseline
+    # selected_features = ['token']
+    #
+    # predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
+    # write_predictions_to_file(test_path, selected_features, predictions, "baseline_SVM")
+    evaluate()
 
     # # implement basic cross-validation in combination with the baseline system
     # run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=True)
