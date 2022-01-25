@@ -103,9 +103,9 @@ def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
     return df_report
 
 
-def evaluate_classifier(predictions, gold_labels, selected_features):
+def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM'):
 
-    print('----> ' + 'Evaluating SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
+    print(f'----> Evaluating {name}' + ' with ' + ' , '.join(selected_features) + ' as features <----')
 
     cf_matrix = generate_confusion_matrix(predictions, gold_labels)
     report = calculate_precision_recall_f1_score(predictions, gold_labels)
