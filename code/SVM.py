@@ -39,7 +39,7 @@ def create_classifier(train_features, train_labels):
     return classifier, vec
 
 
-def select_classifier_using_cross_validation(train_features, train_labels):
+def create_classifier_using_cross_validation(train_features, train_labels):
 
     classifier = LinearSVC()
     vec = DictVectorizer()
@@ -48,8 +48,9 @@ def select_classifier_using_cross_validation(train_features, train_labels):
     # define parameters we want to try out
     # for possibilities, see
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
+
     parameters = {'loss': ['hinge', 'squared_hinge'],
-                  'C': [0.8, 0.9, 1],
+                  'C': [0.6, 0.7, 0.8],
                   'tol': [1e-5, 1e-4],
                   'max_iter': [1000, 2000]}
 
@@ -59,12 +60,9 @@ def select_classifier_using_cross_validation(train_features, train_labels):
 
     grid.fit(train_features_vectorized, train_labels)
 
-    print(f'Done! Best parameters: {grid.best_params_}, f1_macro: '
-          f'{round(grid.score(train_features_vectorized, train_labels), 3)}')
+    print(f'Done! Best parameters: {grid.best_params_}')
 
-    classifier = grid.best_estimator_
-
-    return classifier, vec
+    return grid.best_estimator_, vec
 
 
 def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features):
@@ -80,17 +78,17 @@ def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_fe
     return predictions, gold_labels
 
 
-def print_confusion_matrix(predictions, gold_labels):
+def generate_confusion_matrix(predictions, gold_labels):
 
     labels = sorted(set(gold_labels))
     cf_matrix = confusion_matrix(gold_labels, predictions, labels=labels)
     # transform confusion matrix into a dataframe
     df_cf_matrix = pd.DataFrame(cf_matrix, index=labels, columns=labels)
 
-    print(tabulate(df_cf_matrix, headers='keys', tablefmt='psql'))
+    return df_cf_matrix
 
 
-def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
+def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
 
     # get the report in dictionary form
     report = classification_report(gold_labels, predictions, zero_division=0, output_dict=True)
@@ -102,32 +100,41 @@ def print_precision_recall_f1_score(predictions, gold_labels, digits=3):
     df_report = df_report.round(digits)
     df_report['support'] = df_report['support'].astype(int)
 
-    print(tabulate(df_report, headers='keys', tablefmt='psql'))
+    return df_report
 
 
-def run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=False):
+def evaluate_classifier(predictions, gold_labels, selected_features):
+
+    print('----> ' + 'Evaluating SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
+
+    cf_matrix = generate_confusion_matrix(predictions, gold_labels)
+    report = calculate_precision_recall_f1_score(predictions, gold_labels)
+
+    print(tabulate(cf_matrix, headers='keys', tablefmt='psql'))
+    # print(df_cf_matrix.to_latex())  # print and paste to Overleaf
+
+    print(tabulate(report, headers='keys', tablefmt='psql'))
+    # print(df_report.to_latex())  # print and paste to Overleaf
+
+
+def run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features, cross_validation=False):
 
     train_features, train_labels = extract_features_and_labels(train_path, selected_features)
 
     if cross_validation:
-        classifier, vectorizer = select_classifier_using_cross_validation(train_features, train_labels)
-        print('Result using the best parameters:')
+        classifier, vectorizer = create_classifier_using_cross_validation(train_features, train_labels)
 
     else:
         classifier, vectorizer = create_classifier(train_features, train_labels)
 
     predictions, gold_labels = get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features)
 
-    print('----> ' + 'SVM' + ' with ' + ' , '.join(selected_features) + ' as features <----')
-    print_confusion_matrix(predictions, gold_labels)
-    print_precision_recall_f1_score(predictions, gold_labels)
-
-    return predictions
+    return predictions, gold_labels
 
 
-def write_predictions_to_file(file_path, selected_features, predictions, name):
+def write_predictions_to_file(test_path, selected_features, predictions, name):
 
-    df = pd.read_csv(file_path, encoding='utf-8', sep='\t', keep_default_na=False,
+    df = pd.read_csv(test_path, encoding='utf-8', sep='\t', keep_default_na=False,
                      quotechar='\\', skip_blank_lines=False)
     pred_keys = ['book', 'sent_num', 'token_num'] + selected_features + ['gold_label']
     pred_dict = dict()
@@ -136,7 +143,15 @@ def write_predictions_to_file(file_path, selected_features, predictions, name):
     pred_dict.update({'pred': predictions})
     columns = pred_dict.keys()
     pred_df = pd.DataFrame(pred_dict, columns=columns)
-    pred_df.to_csv(file_path.replace('_features.txt', f'_pred_{name}.txt'), sep='\t', index=False)
+    pred_df.to_csv(test_path.replace('_features.txt', f'_pred_{name}.txt'), sep='\t', index=False)
+
+
+def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=False):
+
+    predictions, gold_labels = run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features,
+                                                                              cross_validation)
+    write_predictions_to_file(test_path, selected_features, predictions, name)
+    evaluate_classifier(predictions, gold_labels, selected_features)
 
 
 def main() -> None:
@@ -150,27 +165,20 @@ def main() -> None:
     train_path = paths[0]
     test_path = paths[1]
 
-    # available_features = ['token', 'lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix',
-    #                       'affix', 'base_is_word', 'base']
-
-    # baseline
+    # run baseline system
+    name = "baseline_SVM"
     selected_features = ['token']
-
-    predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
-    write_predictions_to_file(test_path, selected_features, predictions, "baseline_SVM")
-
-    # # implement basic cross-validation in combination with the baseline system
-    # run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=True)
+    run_and_evaluate_a_system(train_path, test_path, selected_features, name)
 
     # use the full set of features
+    name = "full_SVM"
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
 
-    predictions = run_classifier_and_return_predictions(train_path, test_path, selected_features)
-    write_predictions_to_file(test_path, selected_features, predictions, "full_SVM")
+    run_and_evaluate_a_system(train_path, test_path, selected_features, name)
 
-    # # implement basic cross-validation in combination with the system using all features
-    # run_classifier_and_return_predictions(train_path, test_path, selected_features, cross_validation=True)
+    # implement basic cross-validation in combination with the system using all features
+    run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=True)
 
 
 if __name__ == '__main__':
