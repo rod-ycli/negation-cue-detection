@@ -29,15 +29,18 @@ def main() -> None:
         # Second part: add selected combinations
 
         # Exclude features one by one
-        for target in available_features:
-            combinations.append([f for f in available_features if (f != target)])
+        # for target in available_features:
+        #     combinations.append([f for f in available_features if (f != target)])
 
         # Add selected combinations
-        combinations.append(['lemma', 'pos_category'])
-        combinations.append(['lemma', 'pos_category', 'prev_lemma', 'next_lemma'])  # MWCs
-        combinations.append(['lemma', 'pos_category', 'is_single_cue'])  # single cues
-        combinations.append(['lemma', 'pos_category', 'has_affix'])  # affixal
-        combinations.append(['lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])  # false-affixal: improve precision?
+        combinations.append(['lemma', 'prev_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])
+        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word', 'base'])
+        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
+        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word'])
+        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base'])
+        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
+        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'base_is_word'])
+        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'base_is_word'])
     else:
         combinations.append(feature_combination)
 
@@ -46,8 +49,8 @@ def main() -> None:
         evaluate_classifier(predictions, gold, comb)
 
     # CRF ablation
-    for comb in combinations:
-        run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
+    # for comb in combinations:
+    #     run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
 
 
 if __name__ == '__main__':
