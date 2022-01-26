@@ -29,8 +29,8 @@ def main() -> None:
         # Second part: add selected combinations
 
         # Exclude features one by one
-        # for target in available_features:
-        #     combinations.append([f for f in available_features if (f != target)])
+        for target in available_features:
+            combinations.append([f for f in available_features if (f != target)])
 
         # Add selected combinations
         combinations.append(['lemma', 'prev_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])
@@ -49,8 +49,8 @@ def main() -> None:
         evaluate_classifier(predictions, gold, comb)
 
     # CRF ablation
-    # for comb in combinations:
-    #     run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
+    for comb in combinations:
+        run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
 
 
 if __name__ == '__main__':
