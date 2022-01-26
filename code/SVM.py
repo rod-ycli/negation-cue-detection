@@ -49,10 +49,10 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     # for possibilities, see
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
 
-    parameters = {'loss': ['hinge', 'squared_hinge'],
-                  'C': [0.6, 0.7, 0.8],
-                  'tol': [1e-5, 1e-4],
-                  'max_iter': [1000, 2000]}
+    parameters = {'loss': ['squared_hinge'],
+                  'C': [0.7],
+                  'tol': [0.01],
+                  'max_iter': [1500]}
 
     grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
 
