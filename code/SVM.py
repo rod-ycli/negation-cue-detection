@@ -31,7 +31,7 @@ def extract_features_and_labels(file_path, selected_features):
 
 def create_classifier(train_features, train_labels):
 
-    classifier = LinearSVC()
+    classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
     train_features_vectorized = vec.fit_transform(train_features)
     classifier.fit(train_features_vectorized, train_labels)
@@ -41,7 +41,7 @@ def create_classifier(train_features, train_labels):
 
 def create_classifier_using_cross_validation(train_features, train_labels):
 
-    classifier = LinearSVC()
+    classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
     train_features_vectorized = vec.fit_transform(train_features)
 
@@ -61,6 +61,7 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     grid.fit(train_features_vectorized, train_labels)
 
     print(f'Done! Best parameters: {grid.best_params_}')
+    print(f'Best result on the training set: {round(grid.best_score_, 3)} macro avg f1-score')
 
     return grid.best_estimator_, vec
 

@@ -1,5 +1,6 @@
 import sys
 from SVM import run_classifier_and_return_predictions_and_gold, evaluate_classifier
+from CRF import run_and_evaluate_a_crf_system
 
 
 def main() -> None:
@@ -43,6 +44,10 @@ def main() -> None:
     for comb in combinations:
         predictions, gold = run_classifier_and_return_predictions_and_gold(train_path, test_path, comb)
         evaluate_classifier(predictions, gold, comb)
+
+    # CRF ablation
+    for comb in combinations:
+        run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
 
 
 if __name__ == '__main__':
