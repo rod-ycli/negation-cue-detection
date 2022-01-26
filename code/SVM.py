@@ -61,6 +61,7 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     grid.fit(train_features_vectorized, train_labels)
 
     print(f'Done! Best parameters: {grid.best_params_}')
+    print(f'Best result on the training set: {round(grid.best_score_, 3)} macro avg f1-score')
 
     return grid.best_estimator_, vec
 
