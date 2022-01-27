@@ -20,23 +20,21 @@ def extract_word_embedding(token, word_embedding_model):
 
 
 def combine_embeddings(file, word_embedding_model):
-    
-    tokens = file['token'] 
+
     lemmas = file['lemma']
     prev_lemmas= file['prev_lemma']
     next_lemmas = file['next_lemma']
     
     concatenate_result = []
-    for token,  lemma, prev_lemma, next_lemma in zip(tokens, lemmas, prev_lemmas, next_lemmas ):
+    for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas ):
 
         # Extract embeddings for all token features
-        token_embedding = extract_word_embedding(token, word_embedding_model)
         lemma_embedding = extract_word_embedding(lemma, word_embedding_model)
         prev_lemma_embedding = extract_word_embedding(prev_lemma, word_embedding_model)
         next_lemma_embedding = extract_word_embedding(next_lemma, word_embedding_model)
         
         # Concatenate the embeddings
-        concatenate_result.append(np.concatenate((token_embedding, lemma_embedding, prev_lemma_embedding, next_lemma_embedding)))
+        concatenate_result.append(np.concatenate((lemma_embedding, prev_lemma_embedding, next_lemma_embedding)))
 
     return concatenate_result
 
