@@ -1,7 +1,8 @@
 import csv
 import sys
+import scipy.stats
 import sklearn_crfsuite
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
 import pandas as pd
 from SVM import evaluate_classifier, write_predictions_to_file
 from sklearn.metrics import make_scorer
@@ -58,17 +59,6 @@ def extract_sents_from_file(file_path):
 
 def train_crf_model(X_train, y_train):
 
-    # # parameters provided in the original script actually give the best performance on our test set
-
-    # crf = sklearn_crfsuite.CRF(algorithm='lbfgs',
-    #                            c1=0.1,
-    #                            c2=0.1,
-    #                            max_iterations=100,
-    #                            all_possible_transitions=True)
-    # crf.fit(X_train, y_train)
-    #
-    # return crf
-
     classifier = sklearn_crfsuite.CRF()  # use the default parameters
 
     classifier.fit(X_train, y_train)
@@ -78,40 +68,44 @@ def train_crf_model(X_train, y_train):
 
 def train_crf_model_using_cross_validation(X_train, y_train):
 
-    print("Running cross validation, this will take a while and you should get a FutureWarning")
+    print("Running cross validation, this will take a while and you should get some Future Warnings")
 
-    classifier = sklearn_crfsuite.CRF()
-
-    # possible parameters: https://sklearn-crfsuite.readthedocs.io/en/latest/api.html#module-sklearn_crfsuite
-
-    parameters = {'algorithm': ['lbfgs'],
-                  # 'algorithm': ['lbfgs', 'l2sgd'],
-                  'c1': [0, 0.01, 0.1],
-                  'c2': [0.01, 0.1, 1],
-                  'max_iterations': [100],
-                  # 'max_iterations': [100, 1000],
-                  'all_possible_transitions': ['True', 'False']}
-
-    # we can't use the same scoring as for SVM because labels are represented differently > as a list of lists, 1 list
-    # of labels per sentence
+    # part of the code below taken from
     # https://sklearn-crfsuite.readthedocs.io/en/latest/tutorial.html#hyperparameter-optimization
 
+    # define fixed parameters and parameters to search
+    crf = sklearn_crfsuite.CRF(algorithm='lbfgs',
+                               max_iterations=100,
+                               all_possible_transitions=True)
+
+    params_space = {'c1': scipy.stats.expon(scale=0.5),
+                    'c2': scipy.stats.expon(scale=0.05)}
+
+    # # we can't use the same scoring as for SVM because labels are represented differently > as a list of lists, 1 list
+    # # of labels per sentence
     f1_scorer = make_scorer(metrics.flat_f1_score, average='macro')
 
-    grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring=f1_scorer)
+    # search
+    rs = RandomizedSearchCV(crf, params_space,
+                            cv=5,
+                            verbose=1,
+                            n_jobs=-1,
+                            n_iter=50,
+                            scoring=f1_scorer,
+                            random_state=42)
 
     try:
-        grid.fit(X_train, y_train)
+        rs.fit(X_train, y_train)
 
-    except AttributeError:
-        # https://github.com/TeamHG-Memex/sklearn-crfsuite/issues/60
+    except AttributeError:  # https://github.com/TeamHG-Memex/sklearn-crfsuite/issues/60
         print("You have to use sklearn version lower than 0.24 to be able to run cross-validation.")
         print("You can install it by typing \'pip install -U 'scikit-learn<0.24'\' into your terminal.")
 
     else:
-        print(f'Done! Best parameters: {grid.best_params_}')
-        print(f'Best result on the training set: {round(grid.best_score_, 3)} macro avg f1-score')
-        return grid.best_estimator_
+        print(f'Done! Best parameters: {rs.best_params_}')
+        print(f'Best result on the training set: {round(rs.best_score_, 3)} macro avg f1-score')
+
+    return rs.best_estimator_
 
 
 def create_crf_model(trainingfile, selected_features, cross_validation=False):
