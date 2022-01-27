@@ -30,7 +30,7 @@ def extract_features_and_labels(file_path, selected_features):
 
 def create_classifier(train_features, train_labels):
 
-    classifier = LinearSVC()
+    classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
     train_features_vectorized = vec.fit_transform(train_features)
     classifier.fit(train_features_vectorized, train_labels)
@@ -40,7 +40,7 @@ def create_classifier(train_features, train_labels):
 
 def create_classifier_using_cross_validation(train_features, train_labels):
 
-    classifier = LinearSVC()
+    classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
     train_features_vectorized = vec.fit_transform(train_features)
 
@@ -48,10 +48,10 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     # for possibilities, see
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
 
-    parameters = {'loss': ['hinge', 'squared_hinge'],
-                  'C': [0.6, 0.7, 0.8],
-                  'tol': [1e-5, 1e-4],
-                  'max_iter': [1000, 2000]}
+    parameters = {'loss': ['squared_hinge'],
+                  'C': [0.7],
+                  'tol': [0.01],
+                  'max_iter': [1500]}
 
     grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
 
@@ -60,6 +60,7 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     grid.fit(train_features_vectorized, train_labels)
 
     print(f'Done! Best parameters: {grid.best_params_}')
+    print(f'Best result on the training set: {round(grid.best_score_, 3)} macro avg f1-score')
 
     return grid.best_estimator_, vec
 
