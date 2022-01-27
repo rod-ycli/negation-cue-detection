@@ -7,7 +7,6 @@ import csv
 import sys
 from tabulate import tabulate
 
-
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment2
 
 def extract_features_and_labels(file_path, selected_features):
