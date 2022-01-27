@@ -49,10 +49,10 @@ def create_classifier_using_cross_validation(train_features, train_labels):
     # for possibilities, see
     # https://scikit-learn.org/stable/modules/generated/sklearn.svm.LinearSVC.html#sklearn.svm.LinearSVC
 
-    parameters = {'loss': ['squared_hinge'],
-                  'C': [0.7],
-                  'tol': [0.01],
-                  'max_iter': [1500]}
+    parameters = {'loss': [hinge], ['squared_hinge'],
+                  'C': [0.6, 0.7, 0.8],
+                  'tol': [0.01, 0.03],
+                  'max_iter': [1500, 2000]}
 
     grid = GridSearchCV(estimator=classifier, param_grid=parameters, cv=5, scoring='f1_macro')
 
@@ -113,10 +113,10 @@ def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM')
     report = calculate_precision_recall_f1_score(predictions, gold_labels)
 
     print(tabulate(cf_matrix, headers='keys', tablefmt='psql'))
-    # print(df_cf_matrix.to_latex())  # print and paste to Overleaf
+    # print(cf_matrix.to_latex())  # print and paste to Overleaf
 
     print(tabulate(report, headers='keys', tablefmt='psql'))
-    # print(df_report.to_latex())  # print and paste to Overleaf
+    # print(report.to_latex())  # print and paste to Overleaf
 
 
 def run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features, cross_validation=False):
