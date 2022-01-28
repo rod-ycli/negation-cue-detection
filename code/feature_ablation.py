@@ -3,6 +3,7 @@ import sys
 from CRF import run_and_evaluate_a_crf_system
 # from mlp_classifier import load_data_embeddings, run_classifier, evaluation
 
+
 def main() -> None:
 
     # Feature: lemma, previous_lemma, next_lemma, pos_category, ...
@@ -28,20 +29,18 @@ def main() -> None:
         # First part: exclude features one by one
         # Second part: add selected combinations
 
+        combinations.append(available_features)
+
         # Exclude features one by one
         for target in available_features:
             combinations.append([f for f in available_features if (f != target)])
 
         # Add selected combinations
-        # unwanted_features = ['base', 'is_single_cue', 'next_lemma', 'has_affix']
-        unwanted_combs = []
-        unwanted_combs.append(['base', 'is_single_cue'])
-        unwanted_combs.append(['base', 'next_lemma'])
-        unwanted_combs.append(['base', 'has_affix'])
-        unwanted_combs.append(['base', 'is_single_cue', 'next_lemma'])
-        unwanted_combs.append(['base', 'is_single_cue', 'has_affix'])
-        unwanted_combs.append(['base', 'next_lemma', 'has_affix'])
-        unwanted_combs.append(['base', 'is_single_cue', 'next_lemma', 'has_affix'])
+        # unwanted_features = ['base', 'is_single_cue', 'pos_category', 'prev_lemma']
+        unwanted_combs = [['base', 'is_single_cue'], ['base', 'pos_category'], ['base', 'prev_lemma'],
+                          ['base', 'is_single_cue', 'pos_category'], ['base', 'is_single_cue', 'prev_lemma'],
+                          ['base', 'pos_category', 'prev_lemma'],
+                          ['base', 'is_single_cue', 'pos_category', 'prev_lemma']]
 
         for comb in unwanted_combs:
             combinations.append([f for f in available_features if (f not in comb)])
@@ -57,14 +56,16 @@ def main() -> None:
     else:
         combinations.append(feature_combination)
 
+    ### SVM ablation
     # for comb in combinations:
     #     predictions, gold = run_classifier_and_return_predictions_and_gold(train_path, test_path, comb)
     #     evaluate_classifier(predictions, gold, comb)
 
-    # CRF ablation
+    ### CRF ablation
     for comb in combinations:
         run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
 
+    ### MLP ablation
     # embedding_model_path = '../data/GoogleNews-vectors-negative300.bin'
     # # Load data and the embedding model
     # training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(train_path,
@@ -73,7 +74,6 @@ def main() -> None:
     #
     # for comb in combinations:
     #     # Train classifiers
-    #
     #     clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, comb)
     #
     #     # Make prediction
@@ -84,6 +84,7 @@ def main() -> None:
     #     print("Evaluation of MLP system with the following sparse features:")
     #     print(comb)
     #     evaluation(test_labels, prediction)
+
 
 if __name__ == '__main__':
     main()
