@@ -2,15 +2,23 @@ import gensim
 import numpy as np
 import pandas as pd
 import sys
-import os
-from collections import defaultdict
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 from sklearn.feature_extraction import DictVectorizer
-from sklearn.model_selection import GridSearchCV
 
+# parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment3
 
 def extract_word_embedding(token, word_embedding_model):
+    
+    """
+    Function that returns the 300-dimension dense representation 
+    of the token otherwise '0' if the token does not exist in 
+    the embedding dictionary.
+    
+    :param token: the token
+    :param word_embedding_model: gensim.models.keyedvectors.Word2VecKeyedVectors
+  
+    """
 
     if token in word_embedding_model:
         vector = word_embedding_model[token]
@@ -21,6 +29,17 @@ def extract_word_embedding(token, word_embedding_model):
 
 def combine_embeddings(file, word_embedding_model):
 
+    """
+    Extract dense representation for lemmas, previous lemmas and next lemmas and 
+    using word embeddings, concatenate them, and return a list containing 
+    combined embeddings 
+    
+    :param file: a pandas dataframe
+    :param word_embedding_model: gensim.models.keyedvectors.Word2VecKeyedVectors
+    
+    """
+     
+
     lemmas = file['lemma']
     prev_lemmas= file['prev_lemma']
     next_lemmas = file['next_lemma']
@@ -28,7 +47,10 @@ def combine_embeddings(file, word_embedding_model):
     concatenate_result = []
     for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas ):
 
-        # Extract embeddings for all token features
+
+        # Extract embeddings for all lemmas features
+        
+
         lemma_embedding = extract_word_embedding(lemma, word_embedding_model)
         prev_lemma_embedding = extract_word_embedding(prev_lemma, word_embedding_model)
         next_lemma_embedding = extract_word_embedding(next_lemma, word_embedding_model)
@@ -40,6 +62,14 @@ def combine_embeddings(file, word_embedding_model):
 
 
 def make_sparse_features(data, selected_features):
+    
+    """
+    Convert selected traditional features into one-hot encoding
+    and return a sparse representation 
+    :param data: a pandas dataframe
+    :param selected_features: a list that contains the header names of 
+     the traditional features
+    """
  
     sparse_features = []
     for i in range(len(data)):
@@ -61,7 +91,13 @@ def make_sparse_features(data, selected_features):
 
 
 def combine_features(sparse_features, embeddings):
-   
+    """
+    Combines one-hot encoding (traditional features) with word embedding 
+    (current, previous, and next lemmas) 
+    
+    :param sparse_features: sparse representations of traditional features
+    :param embeddings: word embeddings of the lemmas
+    """
     # Prepare containers
     combined_vectors = []
     sparse = np.array(sparse_features.toarray())
@@ -76,39 +112,39 @@ def combine_features(sparse_features, embeddings):
 
 def train_mlp_classifier(x_train, y_train):
     
-#     clf = MLPClassifier()
-#     parameters = {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)],
-#     'activation': ['tanh', 'relu'],
-#     'solver': ['sgd', 'adam'],
-#     'alpha': [0.0001, 0.05],
-#     'learning_rate': ['constant','adaptive']}
+    """
+    Train a multi-layer classifier using default setting for 
+    solver, alpha and activation function. Hidden layer size 
+    and random state were changed to optimize the model performance
+    """
 
-#     grid = GridSearchCV(estimator=clf, param_grid=parameters, cv=5, scoring='f1_macro')
-
-#     print("Running cross validation, this will take a while and you might get some Convergence Warnings")
-
-#     grid.fit(train_features_vectorized, train_labels)
-
-#     print(f'Done! Best parameters: {grid.best_params_}')
-
-#     return grid.best_estimator_
-    clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=500, random_state=42)
+    clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=500, random_state = 2)
     clf.fit(x_train, y_train)
     return clf
 
 
 def load_data_embeddings(input_file, test_file, embedding_model_path):
-
+    
+    """
+    load in the worb emdding model and return training and test 
+    data/ labels for running MLP classifier
+    
+    :param input_file: path to the training data
+    :param test_file: path to the test data
+    :param embedding_model_path: path to the 300-dimnesion embedding model
+    """
     print('Loading word embedding model...')
     embedding_model = gensim.models.KeyedVectors.load_word2vec_format(
         embedding_model_path, binary=True)
     print('Done loading word embedding model')
-
+    
+    # read in the training data using pandas
     training = pd.read_csv(input_file, encoding='utf-8', sep='\t', keep_default_na=False,     
                              quotechar='\\', skip_blank_lines=False)
     
     training_labels = training['gold_label']
-
+    
+    # read in the test data using pandas
     test = pd.read_csv(test_file, encoding='utf-8', sep='\t', keep_default_na=False,     
                              quotechar='\\', skip_blank_lines=False)
     
@@ -118,46 +154,39 @@ def load_data_embeddings(input_file, test_file, embedding_model_path):
 
 def run_classifier(training, training_labels, test, word_embedding_model, selected_features):
 
-
-    # Extract embeddings for token, prev_token and next_token
+    """
+    Function that runs MLP classifier on a training and test file and retur predicted labels 
+    for evaluation 
+    
+    
+    :param training: training data returned from "load_data_embeddings" function
+    :param training_labels: training labels returned from "load_data_embeddings" function
+    :param test: test data returned from "load_data_embeddings" function
+    :param word_embedding_model: path to the 300-dimnesion embedding model
+    :param selected_features: a list of selected features 
+    """
+    # Extract embeddings for lemmas, previous lemmas, and next lemmas from taining data.
     embeddings = combine_embeddings(training, word_embedding_model)
 
-    # Extract and vectorize one-hot features
+    # Convert the traditional features into one-hot encoding for training data
     sparse_features = make_sparse_features(training, selected_features)
     vec = DictVectorizer()
     sparse_vectors = vec.fit_transform(sparse_features)
 
-    # Combine both kind of features into training data
+    # Combine dense and sparse representation
     training_data = combine_features(sparse_vectors, embeddings)
 
     # Train network
     print("Training classifier...")
     clf = train_mlp_classifier(training_data, training_labels)
-    
-#     clf = MLPClassifier()
-#     parameters = {'hidden_layer_sizes': [(50,50,50), (50,100,50), (100,)],
-#     'activation': ['tanh', 'relu'],
-#     'solver': ['sgd', 'adam'],
-#     'alpha': [0.0001, 0.05],
-#     'learning_rate': ['constant','adaptive']}
-
-#     grid = GridSearchCV(estimator=clf, param_grid=parameters, cv=5, scoring='f1_macro')
-
-#     print("Running cross validation, this will take a while and you might get some Convergence Warnings")
-
-#     grid.fit(training_data, training_labels)
-
-#     print(f'Done! Best parameters: {grid.best_params_}')
-
-#     classifier = grid.best_estimator_
-    
+        
     
     print("Done training classifier")
 
-    # Extract embeddings for token, prev_token and next_token from test data
+    # Extract embeddings for lemmas, previous lemmas, next lemmas from test data
     embeddings = combine_embeddings(test, word_embedding_model)
 
-    # Extract and vectorize one-hot features for test data
+    # Convert the traditional features into one-hot encoding for test data
     sparse_features = make_sparse_features(test, selected_features)
     sparse_vectors = vec.transform(sparse_features)
 
@@ -167,7 +196,16 @@ def run_classifier(training, training_labels, test, word_embedding_model, select
 
 
 def evaluation(test_labels, prediction):
-  
+    
+    '''
+    Function that prints out a confusion matrix with 
+    precision, recall and f-score
+    
+    :param test_labels: gold labels
+    :param prediction: predicted labels
+    
+    '''
+     
     metrics = classification_report(test_labels, prediction, digits=3)
     print(metrics)
 
@@ -182,6 +220,8 @@ def evaluation(test_labels, prediction):
 
 def main() -> None:
     
+    """run all the functions and return evaluation reports for different combination of features"""
+    
     paths = sys.argv[1:]
 
     if not paths:
@@ -194,22 +234,39 @@ def main() -> None:
     embedding_model_path = '../data/GoogleNews-vectors-negative300.bin'
     # Load data and the embedding model
     training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(training_data_path, test_data_path, embedding_model_path)
-
-    selected_features =  ['pos_category', 'is_single_cue', 'has_affix', 'affix','base_is_word', 'base']
-
-    # Train classifiers
-
-    clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, selected_features)
     
-    # Make prediction
-    prediction = clf.predict(test_data)
+    # prepare the container for ablation analysis 
+    available_features =  ['pos_category','is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']
+    
+    selected_features = []
+    
+    i = 0
+    for features in available_features:
+        
+            # add all the traditional features 
+        if i ==0:
+            selected_features.append([f for f in available_features])
+            
+            # add all the traditional features except for the one that is in current iteration 
+        else:
+            selected_features.append([f for f in available_features if (f != features)])
+        i+=1
+    
+    
+    for features in selected_features:
 
-    # Print evaluation
-    print('-------------------------------------------------------')
-    print("Evaluation of MLP system with the following sparse features:")
-    print(selected_features)
-    evaluation(test_labels, prediction)
+        clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, features)
 
+        # Make prediction
+        prediction = clf.predict(test_data)
+
+        # Print evaluation
+        print('-------------------------------------------------------')
+        print("Evaluation of MLP system with the following sparse features:")
+        print(features)
+        evaluation(test_labels, prediction)
+        
+   
 
 if __name__ == '__main__':
     main()
