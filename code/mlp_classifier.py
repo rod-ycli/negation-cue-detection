@@ -28,6 +28,7 @@ def extract_word_embedding(token, word_embedding_model):
 
 
 def combine_embeddings(file, word_embedding_model):
+
     """
     Extract dense representation for lemmas, previous lemmas and next lemmas and 
     using word embeddings, concatenate them, and return a list containing 
@@ -38,6 +39,7 @@ def combine_embeddings(file, word_embedding_model):
     
     """
      
+
     lemmas = file['lemma']
     prev_lemmas= file['prev_lemma']
     next_lemmas = file['next_lemma']
@@ -45,8 +47,10 @@ def combine_embeddings(file, word_embedding_model):
     concatenate_result = []
     for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas ):
 
+
         # Extract embeddings for all lemmas features
         
+
         lemma_embedding = extract_word_embedding(lemma, word_embedding_model)
         prev_lemma_embedding = extract_word_embedding(prev_lemma, word_embedding_model)
         next_lemma_embedding = extract_word_embedding(next_lemma, word_embedding_model)
