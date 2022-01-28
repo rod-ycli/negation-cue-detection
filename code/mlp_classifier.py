@@ -6,10 +6,11 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 from sklearn.feature_extraction import DictVectorizer
 
+
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment3
 
+
 def extract_word_embedding(token, word_embedding_model):
-    
     """
     Function that returns the 300-dimension dense representation 
     of the token otherwise '0' if the token does not exist in 
@@ -28,7 +29,6 @@ def extract_word_embedding(token, word_embedding_model):
 
 
 def combine_embeddings(file, word_embedding_model):
-
     """
     Extract dense representation for lemmas, previous lemmas and next lemmas and 
     using word embeddings, concatenate them, and return a list containing 
@@ -36,10 +36,7 @@ def combine_embeddings(file, word_embedding_model):
     
     :param file: a pandas dataframe
     :param word_embedding_model: gensim.models.keyedvectors.Word2VecKeyedVectors
-    
     """
-     
-
     lemmas = file['lemma']
     prev_lemmas= file['prev_lemma']
     next_lemmas = file['next_lemma']
@@ -47,9 +44,7 @@ def combine_embeddings(file, word_embedding_model):
     concatenate_result = []
     for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas ):
 
-
         # Extract embeddings for all lemmas features
-        
 
         lemma_embedding = extract_word_embedding(lemma, word_embedding_model)
         prev_lemma_embedding = extract_word_embedding(prev_lemma, word_embedding_model)
@@ -118,7 +113,7 @@ def train_mlp_classifier(x_train, y_train):
     and random state were changed to optimize the model performance
     """
 
-    clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=500, random_state = 2)
+    clf = MLPClassifier(solver='adam', alpha=1e-5, hidden_layer_sizes=500, random_state=2)
     clf.fit(x_train, y_train)
     return clf
 
@@ -140,25 +135,25 @@ def load_data_embeddings(input_file, test_file, embedding_model_path):
     
     # read in the training data using pandas
     training = pd.read_csv(input_file, encoding='utf-8', sep='\t', keep_default_na=False,     
-                             quotechar='\\', skip_blank_lines=False)
+                            quotechar='\\', skip_blank_lines=False)
     
     training_labels = training['gold_label']
     
     # read in the test data using pandas
     test = pd.read_csv(test_file, encoding='utf-8', sep='\t', keep_default_na=False,     
-                             quotechar='\\', skip_blank_lines=False)
+                        quotechar='\\', skip_blank_lines=False)
     
     test_labels = test['gold_label']
 
     return training, training_labels, test, test_labels, embedding_model
 
-def run_classifier(training, training_labels, test, word_embedding_model, selected_features):
 
+def run_classifier(training, training_labels, test, word_embedding_model, selected_features):
     """
-    Function that runs MLP classifier on a training and test file and retur predicted labels 
+    Function that runs MLP classifier on a training and test file and return predicted labels
     for evaluation 
     
-    
+
     :param training: training data returned from "load_data_embeddings" function
     :param training_labels: training labels returned from "load_data_embeddings" function
     :param test: test data returned from "load_data_embeddings" function
@@ -179,8 +174,7 @@ def run_classifier(training, training_labels, test, word_embedding_model, select
     # Train network
     print("Training classifier...")
     clf = train_mlp_classifier(training_data, training_labels)
-        
-    
+
     print("Done training classifier")
 
     # Extract embeddings for lemmas, previous lemmas, next lemmas from test data
@@ -196,15 +190,13 @@ def run_classifier(training, training_labels, test, word_embedding_model, select
 
 
 def evaluation(test_labels, prediction):
-    
-    '''
+    """
     Function that prints out a confusion matrix with 
     precision, recall and f-score
     
     :param test_labels: gold labels
     :param prediction: predicted labels
-    
-    '''
+    """
      
     metrics = classification_report(test_labels, prediction, digits=3)
     print(metrics)
@@ -219,7 +211,6 @@ def evaluation(test_labels, prediction):
 
 
 def main() -> None:
-    
     """run all the functions and return evaluation reports for different combination of features"""
     
     paths = sys.argv[1:]
@@ -236,25 +227,16 @@ def main() -> None:
     training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(training_data_path, test_data_path, embedding_model_path)
     
     # prepare the container for ablation analysis 
-    available_features =  ['pos_category','is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']
-    
-    selected_features = []
-    
-    i = 0
-    for features in available_features:
-        
-            # add all the traditional features 
-        if i ==0:
-            selected_features.append([f for f in available_features])
-            
-            # add all the traditional features except for the one that is in current iteration 
-        else:
-            selected_features.append([f for f in available_features if (f != features)])
-        i+=1
-    
-    
-    for features in selected_features:
+    available_features = ['pos_category','is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']
 
+    # add all the traditional features
+    selected_features = [available_features]
+
+    # # Uncomment for ablation: remove traditional features one by one
+    # for features in available_features:
+    #     selected_features.append([f for f in available_features if (f != features)])
+
+    for features in selected_features:
         clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, features)
 
         # Make prediction
@@ -266,7 +248,6 @@ def main() -> None:
         print(features)
         evaluation(test_labels, prediction)
         
-   
 
 if __name__ == '__main__':
     main()
