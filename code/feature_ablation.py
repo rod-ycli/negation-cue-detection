@@ -1,7 +1,7 @@
 import sys
-from SVM import run_classifier_and_return_predictions_and_gold, evaluate_classifier
+# from SVM import run_classifier_and_return_predictions_and_gold, evaluate_classifier
 from CRF import run_and_evaluate_a_crf_system
-
+# from mlp_classifier import load_data_embeddings, run_classifier, evaluation
 
 def main() -> None:
 
@@ -33,25 +33,57 @@ def main() -> None:
             combinations.append([f for f in available_features if (f != target)])
 
         # Add selected combinations
-        combinations.append(['lemma', 'prev_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])
-        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word', 'base'])
-        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
-        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word'])
-        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base'])
-        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
-        combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'base_is_word'])
-        combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'base_is_word'])
+        # unwanted_features = ['base', 'is_single_cue', 'next_lemma', 'has_affix']
+        unwanted_combs = []
+        unwanted_combs.append(['base', 'is_single_cue'])
+        unwanted_combs.append(['base', 'next_lemma'])
+        unwanted_combs.append(['base', 'has_affix'])
+        unwanted_combs.append(['base', 'is_single_cue', 'next_lemma'])
+        unwanted_combs.append(['base', 'is_single_cue', 'has_affix'])
+        unwanted_combs.append(['base', 'next_lemma', 'has_affix'])
+        unwanted_combs.append(['base', 'is_single_cue', 'next_lemma', 'has_affix'])
+
+        for comb in unwanted_combs:
+            combinations.append([f for f in available_features if (f not in comb)])
+
+        # combinations.append(['lemma', 'prev_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word', 'base'])
+        # combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word', 'base'])
+        # combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
+        # combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'affix', 'base_is_word'])
+        # combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base'])
+        # combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'pos_category', 'has_affix', 'affix', 'base_is_word'])
+        # combinations.append(['lemma', 'prev_lemma', 'is_single_cue', 'has_affix', 'base_is_word'])
+        # combinations.append(['lemma', 'prev_lemma', 'next_lemma', 'has_affix', 'base_is_word'])
     else:
         combinations.append(feature_combination)
 
-    for comb in combinations:
-        predictions, gold = run_classifier_and_return_predictions_and_gold(train_path, test_path, comb)
-        evaluate_classifier(predictions, gold, comb)
+    # for comb in combinations:
+    #     predictions, gold = run_classifier_and_return_predictions_and_gold(train_path, test_path, comb)
+    #     evaluate_classifier(predictions, gold, comb)
 
     # CRF ablation
     for comb in combinations:
         run_and_evaluate_a_crf_system(train_path, test_path, comb, name='CRF')
 
+    # embedding_model_path = '../data/GoogleNews-vectors-negative300.bin'
+    # # Load data and the embedding model
+    # training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(train_path,
+    #                                                                                          test_path,
+    #                                                                                          embedding_model_path)
+    #
+    # for comb in combinations:
+    #     # Train classifiers
+    #
+    #     clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, comb)
+    #
+    #     # Make prediction
+    #     prediction = clf.predict(test_data)
+    #
+    #     # Print evaluation
+    #     print('-------------------------------------------------------')
+    #     print("Evaluation of MLP system with the following sparse features:")
+    #     print(comb)
+    #     evaluation(test_labels, prediction)
 
 if __name__ == '__main__':
     main()
