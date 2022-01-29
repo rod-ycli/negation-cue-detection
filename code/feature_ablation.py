@@ -5,6 +5,8 @@ from CRF import run_and_evaluate_a_crf_system
 
 
 def main() -> None:
+    """Run ablation analysis for SVM, CRF, MLP classifiers, evaluating on excluding features one by one
+     and in specific combinations."""
 
     # Feature: lemma, previous_lemma, next_lemma, pos_category, ...
     # ... is_single_cue, has_affix, affix, base_is_word, base

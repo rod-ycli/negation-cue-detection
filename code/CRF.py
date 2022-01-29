@@ -12,6 +12,8 @@ from sklearn_crfsuite import metrics
 
 
 def token2features(sentence, i, selected_features):
+    """Extract features from token level tokenization."""
+
 
     features = {'bias': 1.0}
 
@@ -30,16 +32,19 @@ def token2features(sentence, i, selected_features):
 
 
 def sent2features(sent, selected_features):
+    """Extract features from sentence level tokenization."""
 
     return [token2features(sent, i, selected_features) for i in range(len(sent))]
 
 
 def sent2labels(sent):
+    """Get gold labels from sentence level tokenization."""
 
     return [d['gold_label'] for d in sent]
 
 
 def extract_sents_from_file(file_path):
+    """Read in file and recompose sentences from tokens."""
 
     sents = []
     current_sent = []
@@ -58,6 +63,7 @@ def extract_sents_from_file(file_path):
 
 
 def train_crf_model(X_train, y_train):
+    """Create classifier with default parameters."""
 
     classifier = sklearn_crfsuite.CRF()  # use the default parameters
 
@@ -67,6 +73,7 @@ def train_crf_model(X_train, y_train):
 
 
 def train_crf_model_using_cross_validation(X_train, y_train):
+    """Create classifier using cross validation."""
 
     print("Running cross validation, this will take a while and you should get some Future Warnings")
 
@@ -109,6 +116,7 @@ def train_crf_model_using_cross_validation(X_train, y_train):
 
 
 def create_crf_model(trainingfile, selected_features, cross_validation=False):
+    """Create classifier using default parameters or cross validation."""
 
     train_sents = extract_sents_from_file(trainingfile)
     X_train = [sent2features(s, selected_features) for s in train_sents]
@@ -123,6 +131,7 @@ def create_crf_model(trainingfile, selected_features, cross_validation=False):
 
 
 def run_crf_model(crf, evaluationfile, selected_features):
+    """Extract features from test set, run classifier and get predictions."""
 
     test_sents = extract_sents_from_file(evaluationfile)
     X_test = [sent2features(s, selected_features) for s in test_sents]
@@ -132,6 +141,7 @@ def run_crf_model(crf, evaluationfile, selected_features):
 
 
 def train_and_run_crf_model(trainingfile, evaluationfile, selected_features, cross_validation=False):
+    """Run classifier and get predictions."""
 
     crf = create_crf_model(trainingfile, selected_features, cross_validation)
 
@@ -145,6 +155,7 @@ def train_and_run_crf_model(trainingfile, evaluationfile, selected_features, cro
 
 
 def run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name, cross_validation=False):
+    """Run and evaluate a system using default parameters or cross validation and write predictions to file."""
 
     predictions = train_and_run_crf_model(train_path, test_path, selected_features, cross_validation)
 
@@ -163,6 +174,8 @@ def run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name
 
 
 def main():
+    """Run system with full set of features using default parameters
+        and/or cross validation"""
 
     paths = sys.argv[1:]
 

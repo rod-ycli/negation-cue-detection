@@ -10,6 +10,7 @@ from tabulate import tabulate
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment2
 
 def extract_features_and_labels(file_path, selected_features):
+    """Extract a set of features and gold labels from file."""
 
     features = []
     labels = []
@@ -29,6 +30,7 @@ def extract_features_and_labels(file_path, selected_features):
 
 
 def create_classifier(train_features, train_labels):
+    """Vectorize features and create classifier from training data."""
 
     classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
@@ -39,6 +41,7 @@ def create_classifier(train_features, train_labels):
 
 
 def create_classifier_using_cross_validation(train_features, train_labels):
+    """Vectorize features and create classifier using cross validation for parameter tuning."""
 
     classifier = LinearSVC(random_state=42)
     vec = DictVectorizer()
@@ -66,6 +69,7 @@ def create_classifier_using_cross_validation(train_features, train_labels):
 
 
 def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_features):
+    """Vectorize test features and get predictions."""
 
     # we use the same function as above (guarantees features have the same name and form)
     test_features, gold_labels = extract_features_and_labels(test_path, selected_features)
@@ -80,6 +84,7 @@ def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_fe
 
 
 def generate_confusion_matrix(predictions, gold_labels):
+    """Generate a confusion matrix."""
 
     labels = sorted(set(gold_labels))
     cf_matrix = confusion_matrix(gold_labels, predictions, labels=labels)
@@ -90,6 +95,7 @@ def generate_confusion_matrix(predictions, gold_labels):
 
 
 def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
+    """Calculate evaluation metrics."""
 
     # get the report in dictionary form
     report = classification_report(gold_labels, predictions, zero_division=0, output_dict=True)
@@ -105,6 +111,7 @@ def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
 
 
 def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM'):
+    """Produce full evaluation of classifier."""
 
     print(f"Evaluating {name} with {', '.join(selected_features)} as features:")
 
@@ -119,6 +126,7 @@ def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM')
 
 
 def run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features, cross_validation=False):
+    """Run classifier and get predictions using default parameters or cross validation."""
 
     train_features, train_labels = extract_features_and_labels(train_path, selected_features)
 
@@ -134,6 +142,7 @@ def run_classifier_and_return_predictions_and_gold(train_path, test_path, select
 
 
 def write_predictions_to_file(test_path, selected_features, predictions, name):
+    """Write predictions from classifier to file."""
 
     df = pd.read_csv(test_path, encoding='utf-8', sep='\t', keep_default_na=False,
                      quotechar='\\', skip_blank_lines=False)
@@ -148,6 +157,7 @@ def write_predictions_to_file(test_path, selected_features, predictions, name):
 
 
 def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=False):
+    """Run full classification and evaluation of a system."""
 
     predictions, gold_labels = run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features,
                                                                               cross_validation)
@@ -160,6 +170,8 @@ def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cr
 
 
 def main() -> None:
+    """Run a baseline system with token as feature, run system with full set of features using default parameters
+    and/or cross validation"""
     
     paths = sys.argv[1:]
 
