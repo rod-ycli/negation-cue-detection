@@ -44,27 +44,27 @@ As a result of running the script, .txt file(s) containing the features will be 
 
 
 ##### Step 3.
-Run the `SVM.py` script to train, test and evaluate SVM classifiers.
+Run the `SVM.py` script to train, test and evaluate the SVM classifiers.
 
-Run the `CRF.py` script to train, test and evaluate CRF classifiers.
+Run the `CRF.py` script to train, test and evaluate the CRF classifiers.
 
-Run the `mlp_classifier.py` script to train, test and evaluate MLP classifiers. In order to run this script, `word2vec` model `GoogleNews-vectors-negative300.bin` need to be put in the `../data/` directory.
+Run the `mlp_classifier.py` script to train, test and evaluate the MLP classifiers. In order to run this script, `word2vec` model `GoogleNews-vectors-negative300.bin` needs to be placed in the `../data/` directory. It can be obtained via https://s3.amazonaws.com/dl4j-distribution/GoogleNews-vectors-negative300.bin.gz.
 
-Thees scripts can all be run from the command line, passing one or more arguments specifying the path(s) to the preprocessed .txt file(s) obtained in the last step:
+These scripts can all be run from the command line, passing two arguments specifying the paths to the preprocessed .txt files obtained in step 2:
 
-`python [file_name] [path_to_file] ... [path_to_file]`
+`python file_name_script path_to_preprocessed_train_dataset path_to_preprocessed_test_dataset
 
-Alternatively, running the scripts as are will create results and evaluations of the experiments. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
+Alternatively, running the scripts without passing the arguments will run the experiments as described in the report. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
 
-As a result of running the scripts, .txt files containing the predictions will be created in the same directory that stores the original files(s).
+As a result of running the scripts, .txt files containing the predictions will be created in the same directory that stores the original files.
 
 For the ablation study, run the `feature_ablation.py` script.
 
-This script can be run from the command line, passing one or more arguments specifying the path(s) to the preprocessed .txt file(s) obtained and specified features:
+This script can be run from the command line, passing two arguments specifying the paths to the preprocessed .txt files obtained in step 2 and features to be used when training the classifier:
 
-`python [file_name] [path_to_file] [path_to_file] [feature] ([feature])...`
+`python feature_ablation.py path_to_preprocessed_train_dataset path_to_preprocessed_test_dataset feature1 [feature2] ... [feature9]`
 
-Alternatively, running the scripts as are will create evaluations of the experiments. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
+Alternatively, running the script without passing the arguments will run the ablation analysis as described in the report. In that case, make sure the files are in the data directory and that you execute the script from the code directory, or that you adjust the paths.
 
 ###### Bonus: Exploratory Data Analysis notebook
 EDA.ipynb was used the explore the training and development datasets.
