@@ -2,7 +2,7 @@ import csv
 import sys
 import scipy.stats
 import sklearn_crfsuite
-from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
+from sklearn.model_selection import RandomizedSearchCV
 import pandas as pd
 from SVM import evaluate_classifier, write_predictions_to_file
 from sklearn.metrics import make_scorer
@@ -13,7 +13,6 @@ from sklearn_crfsuite import metrics
 
 def token2features(sentence, i, selected_features):
     """Extract features from token level tokenization."""
-
 
     features = {'bias': 1.0}
 
@@ -72,6 +71,20 @@ def train_crf_model(X_train, y_train):
     return classifier
 
 
+def train_custom_crf_model(X_train, y_train):
+    """Manually create a classifier using the best parameters obtained through CV."""
+
+    classifier = sklearn_crfsuite.CRF(algorithm='lbfgs',
+                                      c1=0.18164392998437914,
+                                      c2=0.005138865750125312,
+                                      max_iterations=100,
+                                      all_possible_transitions=True)
+
+    classifier.fit(X_train, y_train)
+
+    return classifier
+
+
 def train_crf_model_using_cross_validation(X_train, y_train):
     """Create classifier using cross validation."""
 
@@ -115,37 +128,39 @@ def train_crf_model_using_cross_validation(X_train, y_train):
     return rs.best_estimator_
 
 
-def create_crf_model(trainingfile, selected_features, cross_validation=False):
+def create_crf_model(train_path, selected_features, cross_validation=False, custom=False):
     """Create classifier using default parameters or cross validation."""
 
-    train_sents = extract_sents_from_file(trainingfile)
+    train_sents = extract_sents_from_file(train_path)
     X_train = [sent2features(s, selected_features) for s in train_sents]
     y_train = [sent2labels(s) for s in train_sents]
 
     if cross_validation:
         crf = train_crf_model_using_cross_validation(X_train, y_train)
+    elif custom:
+        crf = train_custom_crf_model(X_train, y_train)
     else:
         crf = train_crf_model(X_train, y_train)
 
     return crf
 
 
-def run_crf_model(crf, evaluationfile, selected_features):
+def run_crf_model(crf, test_path, selected_features):
     """Extract features from test set, run classifier and get predictions."""
 
-    test_sents = extract_sents_from_file(evaluationfile)
+    test_sents = extract_sents_from_file(test_path)
     X_test = [sent2features(s, selected_features) for s in test_sents]
     y_pred = crf.predict(X_test)
 
     return y_pred
 
 
-def train_and_run_crf_model(trainingfile, evaluationfile, selected_features, cross_validation=False):
+def train_and_run_crf_model(train_path, test_path, selected_features, cross_validation=False, custom=False):
     """Run classifier and get predictions."""
 
-    crf = create_crf_model(trainingfile, selected_features, cross_validation)
+    crf = create_crf_model(train_path, selected_features, cross_validation, custom)
 
-    pred_labels = run_crf_model(crf, evaluationfile, selected_features)
+    pred_labels = run_crf_model(crf, test_path, selected_features)
 
     predictions = []
     for pred in pred_labels:
@@ -154,10 +169,10 @@ def train_and_run_crf_model(trainingfile, evaluationfile, selected_features, cro
     return predictions
 
 
-def run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name, cross_validation=False):
+def run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name, cross_validation=False, custom=False):
     """Run and evaluate a system using default parameters or cross validation and write predictions to file."""
 
-    predictions = train_and_run_crf_model(train_path, test_path, selected_features, cross_validation)
+    predictions = train_and_run_crf_model(train_path, test_path, selected_features, cross_validation, custom)
 
     if cross_validation:
         print(f"Running {name.replace('_', ' ')} with best parameters")
@@ -187,12 +202,13 @@ def main():
     test_path = paths[1]
 
     # use the full set of features
-    name = "CRF_full"
+    name = "full_CRF"
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
     run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name)
 
     # implement basic cross-validation in combination with the system using all features
+    name = "full_CRF_CV"
     run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name, cross_validation=True)
 
 
