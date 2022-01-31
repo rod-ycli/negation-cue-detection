@@ -9,6 +9,7 @@ from tabulate import tabulate
 
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment2
 
+
 def extract_features_and_labels(file_path, selected_features):
     """Extract a set of features and gold labels from file."""
 
@@ -195,6 +196,7 @@ def main() -> None:
     run_and_evaluate_a_system(train_path, test_path, selected_features, name)
 
     # implement basic cross-validation in combination with the system using all features
+    name = "full_SVM_CV"
     run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=True)
 
 
