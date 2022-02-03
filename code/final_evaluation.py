@@ -20,37 +20,42 @@ def combine_files(infile_paths, outfile_path):
                 i += 1
 
 
-# evaluate system 4 on test data
-selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
-                     'base_is_word', 'base']
-train_path = CONFIG['train_path'].replace('.txt', '_features.txt')
-dir_name = os.path.dirname(train_path)
-test_path = dir_name + 'SEM-2012-SharedTask-CD-SCO-test_features.txt'
+def main():
+    # evaluate System 4 on test data
+    selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
+                         'base_is_word', 'base']
+    train_path = CONFIG['train_path'].replace('.txt', '_features.txt')
+    dir_name = os.path.dirname(train_path)
+    # used combined test files
+    test_path = dir_name + '/SEM-2012-SharedTask-CD-SCO-test_features.txt'
 
-if not os.path.exists(test_path):
-    test_paths = [CONFIG['test_path_cardboard'], CONFIG['test_path_circle']]
-    combined_test_path = dir_name + 'SEM-2012-SharedTask-CD-SCO-test.txt'
-    combine_files(test_paths, combined_test_path)
-    preprocess([combined_test_path])
-    preprocessed_combined_test_path = combined_test_path.replace('.txt', '_preprocessed.txt')
-    extract_features([preprocessed_combined_test_path])
-    test_path = preprocessed_combined_test_path.replace('_preprocessed.txt', '_features.txt')
+    if not os.path.exists(test_path):
+        test_paths = [CONFIG['test_path_cardboard'], CONFIG['test_path_circle']]
+        combined_test_path = dir_name + '/SEM-2012-SharedTask-CD-SCO-test.txt'
+        combine_files(test_paths, combined_test_path)
+        preprocess([combined_test_path])
+        preprocessed_combined_test_path = combined_test_path.replace('.txt', '_preprocessed.txt')
+        extract_features([preprocessed_combined_test_path])
+        # test_path = preprocessed_combined_test_path.replace('_preprocessed.txt', '_features.txt')
 
-run_and_evaluate_a_crf_system(train_path, test_path, selected_features, 'system4_CRF',
-                              custom=True)
+    run_and_evaluate_a_crf_system(train_path, test_path, selected_features, 'system4_CRF',
+                                  custom=True)
 
-# train system 4 on a combined train and dev dataset
-train_path = dir_name + 'SEM-2012-SharedTask-CD-SCO-training-and-dev-simple.v2_features.txt'
-if not os.path.exists(train_path):
+    # train System 4 on a combined train and dev dataset
+    train_path = dir_name + '/SEM-2012-SharedTask-CD-SCO-training-and-dev-simple.v2_features.txt'
+    if not os.path.exists(train_path):
+        train_paths = [CONFIG['train_path'], CONFIG['dev_path']]
+        combined_train_path = dir_name + '/SEM-2012-SharedTask-CD-SCO-training-and-dev-simple.v2.txt'
+        combine_files(train_paths, combined_train_path)
+        preprocess([combined_train_path])
+        preprocessed_combined_train_path = combined_train_path.replace('.txt', '_preprocessed.txt')
+        extract_features([preprocessed_combined_train_path])
+        # train_path = preprocessed_combined_train_path.replace('_preprocessed.txt', '_features.txt')
 
-    train_paths = [CONFIG['train_path'], CONFIG['dev_path']]
-    combined_train_path = '../data/SEM-2012-SharedTask-CD-SCO-training-and-dev-simple.v2.txt'
-    combine_files(train_paths, combined_train_path)
-    preprocess([combined_train_path])
-    preprocessed_combined_train_path = combined_train_path.replace('.txt', '_preprocessed.txt')
-    extract_features([preprocessed_combined_train_path])
-    train_path = preprocessed_combined_train_path.replace('_preprocessed.txt', '_features.txt')
+    name = "system4_CRF_trained_on_train_and_dev"
+    run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name,
+                                  cross_validation=True)
 
-name = "system4_CRF_trained_on_train_and_dev"
-run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name,
-                              cross_validation=True)
+
+if __name__ == '__main__':
+    main()

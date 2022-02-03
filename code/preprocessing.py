@@ -3,6 +3,7 @@ import os
 import sys
 from nltk import pos_tag, WordNetLemmatizer
 from typing import List
+from utils import CONFIG
 
 
 # inspired by https://github.com/cltl/ma-ml4nlp-labs/blob/main/code/assignment3/CRF.py, extract_sents_from_conll
@@ -79,13 +80,13 @@ def generate_preprocessed_file(infile_path: str, outfile_path: str, lemmatized_s
                     token_index += 1
 
 
-def main() -> None:
+def main(paths=None) -> None:
     """Preprocess input file and save a preprocessed version of it."""
-    paths = sys.argv[1:]
+    if not paths:  # if no paths are passed to the function
+        paths = sys.argv[1:]
 
-    if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2.txt']
+    if not paths:  # if no paths are passed to the function through the command line
+        paths = [CONFIG['train_path'], CONFIG['dev_path']]
 
     for path in paths:
         print(f'Preprocessing {os.path.basename(path)}')

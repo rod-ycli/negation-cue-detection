@@ -1,11 +1,10 @@
 from sklearn.svm import LinearSVC
 from sklearn.model_selection import GridSearchCV
 from sklearn.feature_extraction import DictVectorizer
-import pandas as pd
-from sklearn.metrics import classification_report, confusion_matrix
 import csv
 import sys
-from tabulate import tabulate
+from utils import evaluate_classifier, write_predictions_to_file, CONFIG
+
 
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment2
 
@@ -84,48 +83,6 @@ def get_predicted_and_gold_labels(test_path, vectorizer, classifier, selected_fe
     return predictions, gold_labels
 
 
-def generate_confusion_matrix(predictions, gold_labels):
-    """Generate a confusion matrix."""
-
-    labels = sorted(set(gold_labels))
-    cf_matrix = confusion_matrix(gold_labels, predictions, labels=labels)
-    # transform confusion matrix into a dataframe
-    df_cf_matrix = pd.DataFrame(cf_matrix, index=labels, columns=labels)
-
-    return df_cf_matrix
-
-
-def calculate_precision_recall_f1_score(predictions, gold_labels, digits=3):
-    """Calculate evaluation metrics."""
-
-    # get the report in dictionary form
-    report = classification_report(gold_labels, predictions, zero_division=0, output_dict=True)
-    # remove unwanted metrics
-    report.pop('accuracy')
-    report.pop('weighted avg')
-    # transform dictionary into a dataframe and round the results
-    df_report = pd.DataFrame(report).transpose()
-    df_report = df_report.round(digits)
-    df_report['support'] = df_report['support'].astype(int)
-
-    return df_report
-
-
-def evaluate_classifier(predictions, gold_labels, selected_features, name='SVM'):
-    """Produce full evaluation of classifier."""
-
-    print(f"Evaluating {name} with {', '.join(selected_features)} as features:")
-
-    cf_matrix = generate_confusion_matrix(predictions, gold_labels)
-    report = calculate_precision_recall_f1_score(predictions, gold_labels)
-
-    print(tabulate(cf_matrix, headers='keys', tablefmt='psql'))
-    # print(cf_matrix.to_latex())  # print and paste to Overleaf
-
-    print(tabulate(report, headers='keys', tablefmt='psql'))
-    # print(report.to_latex())  # print and paste to Overleaf
-
-
 def run_classifier_and_return_predictions_and_gold(train_path, test_path, selected_features, cross_validation=False):
     """Run classifier and get predictions using default parameters or cross validation."""
 
@@ -142,21 +99,6 @@ def run_classifier_and_return_predictions_and_gold(train_path, test_path, select
     return predictions, gold_labels
 
 
-def write_predictions_to_file(test_path, selected_features, predictions, name):
-    """Write predictions from classifier to file."""
-
-    df = pd.read_csv(test_path, encoding='utf-8', sep='\t', keep_default_na=False,
-                     quotechar='\\', skip_blank_lines=False)
-    pred_keys = ['book', 'sent_num', 'token_num'] + selected_features + ['gold_label']
-    pred_dict = dict()
-    for key in pred_keys:
-        pred_dict[key] = df[key]
-    pred_dict.update({'pred': predictions})
-    columns = pred_dict.keys()
-    pred_df = pd.DataFrame(pred_dict, columns=columns)
-    pred_df.to_csv(test_path.replace('_features.txt', f'_pred_{name}.txt'), sep='\t', index=False)
-
-
 def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=False):
     """Run full classification and evaluation of a system."""
 
@@ -166,22 +108,23 @@ def run_and_evaluate_a_system(train_path, test_path, selected_features, name, cr
         print(f"Running {name.replace('_', ' ')} with best parameters")
     else:
         print(f"Running {name.replace('_', ' ')}")
+
     write_predictions_to_file(test_path, selected_features, predictions, name)
-    evaluate_classifier(predictions, gold_labels, selected_features)
+    evaluate_classifier(predictions, gold_labels, selected_features, name)
 
 
-def main() -> None:
+def main(paths=None) -> None:
     """Run a baseline system with token as feature, run system with full set of features using default parameters
-    and/or cross validation"""
-    
-    paths = sys.argv[1:]
+    and cross validation"""
 
-    if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_features.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_features.txt']
+    if not paths:  # if no paths are passed to the function
+        paths = sys.argv[1:]
 
-    train_path = paths[0]
-    test_path = paths[1]
+    if not paths:  # if no paths are passed to the function through the command line
+        paths = [CONFIG['train_path'].replace('.txt', '_features.txt'),
+                 CONFIG['dev_path'].replace('.txt', '_features.txt')]
+
+    train_path, test_path = paths
 
     # run baseline system
     name = "baseline_SVM"
@@ -189,14 +132,14 @@ def main() -> None:
     run_and_evaluate_a_system(train_path, test_path, selected_features, name)
 
     # use the full set of features
-    name = "full_SVM"
+    name = "system1_SVM"
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
 
     run_and_evaluate_a_system(train_path, test_path, selected_features, name)
 
     # implement basic cross-validation in combination with the system using all features
-    name = "full_SVM_CV"
+    name = "system2_SVM"
     run_and_evaluate_a_system(train_path, test_path, selected_features, name, cross_validation=True)
 
 

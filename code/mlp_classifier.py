@@ -5,6 +5,7 @@ import sys
 from sklearn.neural_network import MLPClassifier
 from sklearn.metrics import classification_report
 from sklearn.feature_extraction import DictVectorizer
+from utils import evaluate_classifier, write_predictions_to_file, CONFIG
 
 
 # parts of the code are inspired by code available at https://github.com/cltl/ma-ml4nlp-labs/tree/main/code/assignment3
@@ -38,11 +39,11 @@ def combine_embeddings(file, word_embedding_model):
     :param word_embedding_model: gensim.models.keyedvectors.Word2VecKeyedVectors
     """
     lemmas = file['lemma']
-    prev_lemmas= file['prev_lemma']
+    prev_lemmas = file['prev_lemma']
     next_lemmas = file['next_lemma']
     
     concatenate_result = []
-    for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas ):
+    for lemma, prev_lemma, next_lemma in zip(lemmas, prev_lemmas, next_lemmas):
 
         # Extract embeddings for all lemmas features
 
@@ -77,8 +78,7 @@ def make_sparse_features(data, selected_features):
         for feature in selected_features:
             value = data[feature][i]
             feature_dict[feature] = value
-        
-        
+
         # Append all sample feature dictionaries
         sparse_features.append(feature_dict)
 
@@ -135,13 +135,13 @@ def load_data_embeddings(input_file, test_file, embedding_model_path):
     
     # read in the training data using pandas
     training = pd.read_csv(input_file, encoding='utf-8', sep='\t', keep_default_na=False,     
-                            quotechar='\\', skip_blank_lines=False)
+                           quotechar='\\', skip_blank_lines=False)
     
     training_labels = training['gold_label']
     
     # read in the test data using pandas
     test = pd.read_csv(test_file, encoding='utf-8', sep='\t', keep_default_na=False,     
-                        quotechar='\\', skip_blank_lines=False)
+                       quotechar='\\', skip_blank_lines=False)
     
     test_labels = test['gold_label']
 
@@ -210,44 +210,51 @@ def evaluation(test_labels, prediction):
     print()
 
 
-def main() -> None:
+def main(paths=None) -> None:
     """run all the functions and return evaluation reports for different combination of features"""
-    
-    paths = sys.argv[1:]
+    if not paths:
+        paths = sys.argv[1:]
 
     if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_features.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_features.txt']
+        paths = [CONFIG['train_path'].replace('.txt', '_features.txt'),
+                 CONFIG['dev_path'].replace('.txt', '_features.txt')]
    
-    training_data_path = paths[0]
-    test_data_path = paths[1]
-    
-    embedding_model_path = '../data/GoogleNews-vectors-negative300.bin'
+    training_data_path, test_data_path = paths
+
+    embedding_model_path = CONFIG['embedding_model_path']
     # Load data and the embedding model
-    training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(training_data_path, test_data_path, embedding_model_path)
+    training, training_labels, test, test_labels, word_embedding_model = load_data_embeddings(training_data_path,
+                                                                                              test_data_path,
+                                                                                              embedding_model_path)
     
     # prepare the container for ablation analysis 
-    available_features = ['pos_category','is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']
+    available_features = ['pos_category', 'is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']
 
     # add all the traditional features
     selected_features = [available_features]
 
+    # run the system using all features
+    name = 'system5_MLP'
+    clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, selected_features[0])
+    predictions = clf.predict(test_data)
+    feature_names = ['lemma', 'prev_lemma', 'next_lemma'] + selected_features[0]
+    evaluate_classifier(predictions, test_labels, feature_names, name)
+    write_predictions_to_file(test_data_path, feature_names, predictions, name)
+
     # # Uncomment for ablation: remove traditional features one by one
     # for features in available_features:
     #     selected_features.append([f for f in available_features if (f != features)])
+    #
+    # for features in selected_features[1:]:
+    #     clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, features)
+    #
+    #     # Make prediction
+    #     predictions = clf.predict(test_data)
+    #
+    #     # Print evaluation
+    #     feature_names = ['lemma', 'prev_lemma', 'next_lemma'] + features
+    #     evaluate_classifier(predictions, test_labels, feature_names, 'MLP')
 
-    for features in selected_features:
-        clf, test_data = run_classifier(training, training_labels, test, word_embedding_model, features)
-
-        # Make prediction
-        prediction = clf.predict(test_data)
-
-        # Print evaluation
-        print('-------------------------------------------------------')
-        print("Evaluation of MLP system with the following sparse features:")
-        print(features)
-        evaluation(test_labels, prediction)
-        
 
 if __name__ == '__main__':
     main()

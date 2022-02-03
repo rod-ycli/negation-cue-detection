@@ -4,9 +4,9 @@ import scipy.stats
 import sklearn_crfsuite
 from sklearn.model_selection import RandomizedSearchCV
 import pandas as pd
-from SVM import evaluate_classifier, write_predictions_to_file
 from sklearn.metrics import make_scorer
 from sklearn_crfsuite import metrics
+from utils import evaluate_classifier, write_predictions_to_file, CONFIG
 
 # based on https://github.com/cltl/ma-ml4nlp-labs/blob/main/code/assignment3/CRF.py
 
@@ -19,7 +19,7 @@ def token2features(sentence, i, selected_features):
     for feature in selected_features:
         value = sentence[i][feature]
 
-        if value and value not in ['eos'' bos']:  # if there is a value for this feature and it is not 'eos' or 'bos'
+        if value:  # if there is a value for this feature
             features[feature] = value
 
     if i == 0:
@@ -185,30 +185,30 @@ def run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name
                      quotechar='\\', skip_blank_lines=False)
 
     gold_labels = df['gold_label'].to_list()
-    evaluate_classifier(predictions, gold_labels, selected_features, 'CRF')
+    evaluate_classifier(predictions, gold_labels, selected_features, name)
 
 
-def main():
+def main(paths=None):
     """Run system with full set of features using default parameters
         and/or cross validation"""
 
-    paths = sys.argv[1:]
+    if not paths:  # if no paths are passed to the function
+        paths = sys.argv[1:]
 
-    if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_features.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_features.txt']
+    if not paths:  # if no paths are passed to the function through the command line
+        paths = [CONFIG['train_path'].replace('.txt', '_features.txt'),
+                 CONFIG['dev_path'].replace('.txt', '_features.txt')]
 
-    train_path = paths[0]
-    test_path = paths[1]
+    train_path, test_path = paths
 
     # use the full set of features
-    name = "full_CRF"
+    name = "system3_CRF"
     selected_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category', 'is_single_cue', 'has_affix', 'affix',
                          'base_is_word', 'base']
     run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name)
 
     # implement basic cross-validation in combination with the system using all features
-    name = "full_CRF_CV"
+    name = "system4_CRF"
     run_and_evaluate_a_crf_system(train_path, test_path, selected_features, name, cross_validation=True)
 
 

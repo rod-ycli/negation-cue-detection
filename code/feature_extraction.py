@@ -4,6 +4,7 @@ import sys
 import pandas as pd
 from nltk.corpus import gutenberg
 from typing import List, Tuple
+from utils import CONFIG
 
 
 def generate_pos_category(pos_tags: List[str]) -> List[str]:
@@ -171,10 +172,9 @@ def get_negation_features(lemmas: list, single_neg_cues: set, neg_prefix: set, n
     return neg_cues, has_affix, affix, base_is_word, base
 
 
-def write_features(input_file: str, neg_cues_set: set, neg_prefix: set, neg_suffix: set, vocab: set) -> None:
+def write_features(input_file: str, output_file: str, neg_cues_set: set, neg_prefix: set, neg_suffix: set,
+                   vocab: set) -> None:
     """Generate a new file containing extracted features."""
-    # Prepare output file
-    output_file = input_file.replace('_preprocessed.txt', '_features.txt')
 
     # Read in preprocessed file
     input_data = pd.read_csv(input_file, encoding='utf-8', sep='\t', header=None, keep_default_na=False,     
@@ -216,15 +216,16 @@ def write_features(input_file: str, neg_cues_set: set, neg_prefix: set, neg_suff
     features_df_clean.to_csv(output_file, sep='\t', index=False)
 
 
-def main() -> None:
+def main(paths=None) -> None:
     """Extend the features for preprocessed file and save a features-added version."""
-    paths = sys.argv[1:]
+    if not paths:  # if no paths are passed to the function
+        paths = sys.argv[1:]
 
-    if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_preprocessed.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_preprocessed.txt']
+    if not paths:  # if no paths are passed to the function through the command line
+        paths = [CONFIG['train_path'].replace('.txt', '_preprocessed.txt'),
+                 CONFIG['dev_path'].replace('.txt', '_preprocessed.txt')]
         
-    single_neg_cues_file = './single_neg_cues.txt'
+    single_neg_cues_file = CONFIG['single_neg_cues_file']
     neg_cues_set = set()
         
     with open(single_neg_cues_file, 'r', encoding='utf8') as infile:
@@ -243,8 +244,10 @@ def main() -> None:
     print("Done")
 
     for path in paths:
+        # Prepare output file
+        output_file = path.replace('_preprocessed.txt', '_features.txt')
         print(f'Extracting features from {os.path.basename(path)}')
-        write_features(path, neg_cues_set, neg_prefix, neg_suffix, vocab)
+        write_features(path, output_file, neg_cues_set, neg_prefix, neg_suffix, vocab)
 
 
 if __name__ == '__main__':
