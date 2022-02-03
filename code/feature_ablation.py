@@ -61,7 +61,7 @@ def main(paths=None) -> None:
     # SVM ablation
     for comb in combinations:
         predictions, gold = run_classifier_and_return_predictions_and_gold(train_path, test_path, comb)
-        evaluate_classifier(predictions, gold, comb)
+        evaluate_classifier(predictions, gold, comb, 'SVM')
 
 
 if __name__ == '__main__':
