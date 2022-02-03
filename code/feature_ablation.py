@@ -2,25 +2,24 @@ import sys
 from SVM import run_classifier_and_return_predictions_and_gold, evaluate_classifier
 from CRF import train_and_run_crf_model
 import pandas as pd
+from utils import CONFIG
 
 
-def main() -> None:
+def main(paths=None) -> None:
     """Run ablation analysis for SVM, CRF, MLP classifiers, evaluating on excluding features one by one
      and in specific combinations."""
 
-    # Feature: lemma, previous_lemma, next_lemma, pos_category, ...
-    # ... is_single_cue, has_affix, affix, base_is_word, base
+    if not paths:
+        paths = sys.argv[1:3]
 
-    paths = sys.argv[1:3]
     # Feature combination can be specified in the command line
     feature_combination = sys.argv[3:]
 
     if not paths:
-        paths = ['../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2_features.txt',
-                 '../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2_features.txt']
+        paths = [CONFIG['train_path'].replace('.txt', '_features.txt'),
+                 CONFIG['dev_path'].replace('.txt', '_features.txt')]
 
-    train_path = paths[0]
-    test_path = paths[1]
+    train_path, test_path = paths
 
     available_features = ['lemma', 'prev_lemma', 'next_lemma', 'pos_category',
                           'is_single_cue', 'has_affix', 'affix', 'base_is_word', 'base']

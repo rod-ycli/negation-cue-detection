@@ -1,0 +1,9 @@
+{
+"train_path": "../data/SEM-2012-SharedTask-CD-SCO-training-simple.v2.txt",
+"dev_path": "../data/SEM-2012-SharedTask-CD-SCO-dev-simple.v2.txt",
+"test_path_cardboard": "../data/SEM-2012-SharedTask-CD-SCO-test-cardboard.txt",
+"test_path_circle": "../data/SEM-2012-SharedTask-CD-SCO-test-circle.txt",
+"single_neg_cues_file": "./single_neg_cues.txt",
+"embedding_model_path": "../data/GoogleNews-vectors-negative300.bin"
+}
+
