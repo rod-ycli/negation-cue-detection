@@ -27,29 +27,29 @@ Install the required Python modules specified in `requirements.txt`. This can be
 ##### Step 1: Classification experiments
 Run the `all_experiments.py` script. This script will run all the steps needed to reproduce experiments described in the report. It will take care of preprocessing the data files, extracting features, and building and evaluating the baseline system and 5 machine learning systems used in the experiments.  Results of prediction for each system will be written to a file in `./data/predictions`.
 
-Alternativelly, different experimental steps can also be conducted one by one as described below. Running the scripts without passing the arguments will run on the paths specified in the config.json file. As a result of running the scripts, new .txt files containing preprocessed data will be created in the same directory as the original file:
+Alternativelly, different experimental steps can also be conducted one by one as described below. Running the scripts without passing the arguments will run on the paths specified in the config.json file. As a result of running the scripts, new .txt files containing preprocessed data will be created in the `/predictions` directory:
 
-	###### 1A: Preprocessing
-	Run the `preprocessing.py` script.
+###### 1A: Preprocessing
+Run the `preprocessing.py` script.
 
-	The script can be run from the command line, passing one or more arguments specifying the path(s) to the .txt file(s) to be preprocessed:
-	`python preprocessing.py [path_to_file] ... [path_to_file]`
+The script can be run from the command line, passing one or more arguments specifying the path(s) to the .txt file(s) to be preprocessed:
+`python preprocessing.py [path_to_file] ... [path_to_file]`
 
-	###### 1B: Feature extraction
-	Run the `feature_extraction.py` script.
+###### 1B: Feature extraction
+Run the `feature_extraction.py` script.
 
-	The script can be run from the command line, passing one or more arguments specifying the path(s) to the preprocessed .txt file(s) obtained in the last step:
-	`python feature_extraction.py [path_to_file] ... [path_to_file]`
+The script can be run from the command line, passing one or more arguments specifying the path(s) to the preprocessed .txt file(s) obtained in the last step:
+`python feature_extraction.py [path_to_file] ... [path_to_file]`
 
-	###### 1C: Running the experiments
-	Run the `SVM.py` script to train, test and evaluate the SVM classifiers.
+###### 1C: Running the experiments
+Run the `SVM.py` script to train, test and evaluate the SVM classifiers.
 
-	Run the `CRF.py` script to train, test and evaluate the CRF classifiers.
+Run the `CRF.py` script to train, test and evaluate the CRF classifiers.
 
-	Run the `mlp_classifier.py` script to train, test and evaluate the MLP classifiers.
+Run the `mlp_classifier.py` script to train, test and evaluate the MLP classifiers.
 
-	These scripts can all be run from the command line, passing two arguments specifying the paths to the .txt files obtained in 1B:
-	`python file_name_script path_to_train_dataset_with_features_extracted path_to_test_dataset_with_features_extracted`
+These scripts can all be run from the command line, passing two arguments specifying the paths to the .txt files obtained in 1B:
+`python file_name_script path_to_train_dataset_with_features_extracted path_to_test_dataset_with_features_extracted`
 
 
 ##### Step 2: Feature ablation
